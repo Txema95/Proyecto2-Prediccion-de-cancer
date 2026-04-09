@@ -1,0 +1,12 @@
+[project]
+name = "deteccion-cancer"
+version = "0.1.0"
+description = "Simulador de apoyo al diagnóstico de cáncer de colon (API + ML + frontend)"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+    "matplotlib>=3.8.0",
+    "pandas>=2.2.0",
+    "seaborn>=0.13.0",
+    "uvicorn[standard]>=0.32.0",
+]

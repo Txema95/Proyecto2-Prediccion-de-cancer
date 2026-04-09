@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# Frontend (cuando añadas Node)
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+*.local
+
+# Datos e imágenes (evitar commits masivos; usa muestras pequeñas o DVC/LFS)
+/data/raw/**
+!/data/raw/.gitkeep
+/data/processed/**
+!/data/processed/.gitkeep
+/data/external/**
+!/data/external/.gitkeep
+/assets/images/raw/**
+!/assets/images/raw/.gitkeep
+/assets/images/processed/**
+!/assets/images/processed/.gitkeep
+
+# ML artifacts
+/ml/artifacts/**
+!/ml/artifacts/.gitkeep
+*.pt
+*.pth
+*.onnx
+*.h5
+*.joblib
+*.parquet
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Pruebas / cobertura
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
