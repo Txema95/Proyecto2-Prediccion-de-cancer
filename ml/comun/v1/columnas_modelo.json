@@ -1,0 +1,15 @@
+[
+  "age",
+  "sex",
+  "sof",
+  "diabetes",
+  "tenesmus",
+  "previous_rt",
+  "rectorrhagia",
+  "digestive_family_risk_level",
+  "intestinal_habit",
+  "alcohol",
+  "tobacco",
+  "n_sintomas",
+  "riesgo_familiar_x_edad"
+]

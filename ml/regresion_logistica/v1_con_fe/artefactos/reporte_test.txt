@@ -1,0 +1,31 @@
+Evaluacion baseline sin FE: regresion_logistica
+
+Registros en test: 1520
+
+Metricas validacion:
+{
+  "accuracy": 0.9269736842105263,
+  "recall": 0.9198717948717948,
+  "f1": 0.8379562043795621,
+  "roc_auc": 0.9723663822380709,
+  "pr_auc": 0.8999743750424466
+}
+
+Metricas test:
+{
+  "accuracy": 0.9197368421052632,
+  "recall": 0.9006410256410257,
+  "f1": 0.8216374269005848,
+  "roc_auc": 0.9697436428086261,
+  "pr_auc": 0.8738399018014824
+}
+
+Classification report:
+              precision    recall  f1-score   support
+
+           0     0.9730    0.9247    0.9482      1208
+           1     0.7554    0.9006    0.8216       312
+
+    accuracy                         0.9197      1520
+   macro avg     0.8642    0.9127    0.8849      1520
+weighted avg     0.9283    0.9197    0.9222      1520

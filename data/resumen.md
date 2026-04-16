@@ -2,15 +2,17 @@
 
 Documento vivo del flujo de datos del simulador (cáncer de colon). Los scripts viven en `data/scripts/cleaning/` (limpieza) y `data/scripts/analysis/` (tipos, EDA).
 
+El CSV **`cancer_final.csv`** procede del Excel **`data/raw/rectesestadistica.xlsx`** (hoja `Full1`, cuestionario en catalán); las etiquetas de alcohol, tabaco, hábito intestinal y antecedentes familiares en texto → códigos en el CSV están detalladas en **`data/raw/README.md`**.
+
 ---
 
 ## 1. Transformación de variables
 
-El dataset original mezcla texto y ordinales. La versión principal de trabajo es `**data/processed/cancer_final_clean_v2.csv**`, generada con `cancer_final_clean_v2.py`.
+El dataset en bruto mezcla texto (Excel) y, en la exportación, ordinales numéricos. La versión principal de trabajo es **`data/processed/cancer_final_clean_v2.csv`**, generada con `cancer_final_clean_v2.py`.
 
 ### Ordinales (se mantienen como enteros)
 
-- **alcohol** (0–4), **tobacco** (0–2), **intestinal_habit** (0–5): conservan la escala del CSV; el modelo puede tratarlas como ordenadas.
+- **alcohol** (0–4), **tobacco** (0–2), **intestinal_habit** (0–5): en el Excel son categorías en catalán; en el CSV, enteros. Ver README para el significado clínico de las etiquetas originales.
 
 ### Binarias (0 / 1)
 

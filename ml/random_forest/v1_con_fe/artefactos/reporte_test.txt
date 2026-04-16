@@ -1,0 +1,31 @@
+Evaluacion baseline sin FE: random_forest
+
+Registros en test: 1520
+
+Metricas validacion:
+{
+  "accuracy": 0.9421052631578948,
+  "recall": 0.8525641025641025,
+  "f1": 0.8580645161290322,
+  "roc_auc": 0.9706656478179656,
+  "pr_auc": 0.9266985267698621
+}
+
+Metricas test:
+{
+  "accuracy": 0.9282894736842106,
+  "recall": 0.842948717948718,
+  "f1": 0.8283464566929134,
+  "roc_auc": 0.9673053043810494,
+  "pr_auc": 0.8933314511235365
+}
+
+Classification report:
+              precision    recall  f1-score   support
+
+           0     0.9591    0.9503    0.9547      1208
+           1     0.8142    0.8429    0.8283       312
+
+    accuracy                         0.9283      1520
+   macro avg     0.8867    0.8966    0.8915      1520
+weighted avg     0.9293    0.9283    0.9287      1520

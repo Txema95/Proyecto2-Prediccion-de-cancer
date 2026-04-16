@@ -1,0 +1,1091 @@
+{
+  "regresion_logistica": {
+    "modelo": "regresion_logistica",
+    "metricas_base_cv": {
+      "pr_auc": 0.8984881751128155,
+      "recall": 0.9139895775687142,
+      "f1": 0.8362150120537502,
+      "roc_auc": 0.9716834907611418
+    },
+    "features_recomendadas": [
+      "edad_x_habito_intestinal"
+    ],
+    "metricas_finales_cv": {
+      "pr_auc": 0.9036523103376538,
+      "recall": 0.9130280391071757,
+      "f1": 0.8364484436730162,
+      "roc_auc": 0.9724921121392424
+    },
+    "ganancia_total_vs_base": {
+      "pr_auc": 0.005164135224838273,
+      "recall": -0.0009615384615385691,
+      "f1": 0.0002334316192660335,
+      "roc_auc": 0.0008086213781005602
+    },
+    "ranking_candidatas": [
+      {
+        "paso": 1,
+        "feature_candidata": "edad_x_habito_intestinal",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9036523103376538,
+          "recall": 0.9130280391071757,
+          "f1": 0.8364484436730162,
+          "roc_auc": 0.9724921121392424
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.005164135224838273,
+          "recall": -0.0009615384615385691,
+          "f1": 0.0002334316192660335,
+          "roc_auc": 0.0008086213781005602
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "sof_x_tenesmus",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.900394395209242,
+          "recall": 0.9091841911086516,
+          "f1": 0.8461389594193498,
+          "roc_auc": 0.9713829929844945
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.001906220096426492,
+          "recall": -0.004805386460062677,
+          "f1": 0.00992394736559965,
+          "roc_auc": -0.0003004977766473127
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "sof_x_tenesmus",
+        "seleccion_actual": [
+          "edad_x_habito_intestinal"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9047930657144448,
+          "recall": 0.9106253458771445,
+          "f1": 0.8452085977145897,
+          "roc_auc": 0.9722999297647406
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0011407553767910361,
+          "recall": -0.002402693230031172,
+          "f1": 0.008760154041573487,
+          "roc_auc": -0.00019218237450180364
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "edad_x_tabaco",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.8994124448835941,
+          "recall": 0.9130291920309904,
+          "f1": 0.8349646101238388,
+          "roc_auc": 0.9720049209079942
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0009242697707785297,
+          "recall": -0.000960385537723818,
+          "f1": -0.0012504019299113267,
+          "roc_auc": 0.00032143014685237503
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "edad_x_tenesmus",
+        "seleccion_actual": [
+          "edad_x_habito_intestinal"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9045461444689333,
+          "recall": 0.9130280391071757,
+          "f1": 0.8360849290118535,
+          "roc_auc": 0.9724839113420206
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.000893834131279525,
+          "recall": 0.0,
+          "f1": -0.0003635146611626894,
+          "roc_auc": -8.200797221746825e-06
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "edad_x_tenesmus",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.899299963795757,
+          "recall": 0.9139895775687142,
+          "f1": 0.8362191069250903,
+          "roc_auc": 0.9717732483864795
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0008117886829415166,
+          "recall": 0.0,
+          "f1": 4.094871340121209e-06,
+          "roc_auc": 8.975762533769416e-05
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "edad_x_sof",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.8992483103983039,
+          "recall": 0.9139884246448993,
+          "f1": 0.8347575667670387,
+          "roc_auc": 0.971840125128755
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0007601352854883503,
+          "recall": -1.152923814973228e-06,
+          "f1": -0.001457445286711434,
+          "roc_auc": 0.00015663436761315097
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "sof_x_rectorragia",
+        "seleccion_actual": [
+          "edad_x_habito_intestinal"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9042234615434843,
+          "recall": 0.9154307323372073,
+          "f1": 0.8291922276663103,
+          "roc_auc": 0.9727422450477267
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0005711512058305113,
+          "recall": 0.002402693230031616,
+          "f1": -0.007256216006705896,
+          "roc_auc": 0.0002501329084843018
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "sof_x_rectorragia",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.89874747064053,
+          "recall": 0.9168718871057001,
+          "f1": 0.8285098938908508,
+          "roc_auc": 0.9719312383347024
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.00025929552771442044,
+          "recall": 0.002882309536985872,
+          "f1": -0.007705118162899316,
+          "roc_auc": 0.0002477475735606083
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "n_sintomas",
+        "seleccion_actual": [
+          "edad_x_habito_intestinal"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.903731694816875,
+          "recall": 0.9135076554141304,
+          "f1": 0.8365266346169784,
+          "roc_auc": 0.9724992781694375
+        },
+        "ganancia_marginal": {
+          "pr_auc": 7.938447922117842e-05,
+          "recall": 0.0004796163069546999,
+          "f1": 7.81909439622197e-05,
+          "roc_auc": 7.166030195127071e-06
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "n_sintomas",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.8985156175520718,
+          "recall": 0.9139895775687142,
+          "f1": 0.8360291265019024,
+          "roc_auc": 0.9716852781511054
+        },
+        "ganancia_marginal": {
+          "pr_auc": 2.7442439256231133e-05,
+          "recall": 0.0,
+          "f1": -0.00018588555184773092,
+          "roc_auc": 1.7873899635922896e-06
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "edad_x_tabaco",
+        "seleccion_actual": [
+          "edad_x_habito_intestinal"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9035328691390412,
+          "recall": 0.9135076554141304,
+          "f1": 0.8357899386430736,
+          "roc_auc": 0.9725378459773987
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.00011944119861262426,
+          "recall": 0.0004796163069546999,
+          "f1": -0.0006585050299425799,
+          "roc_auc": 4.573383815631438e-05
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "tabaco_x_alcohol",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.8983479077704819,
+          "recall": 0.9135099612617598,
+          "f1": 0.8361436749861572,
+          "roc_auc": 0.9716730650357878
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.00014026734233363314,
+          "recall": -0.0004796163069544779,
+          "f1": -7.133706759299141e-05,
+          "roc_auc": -1.0425725354035187e-05
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "tabaco_x_alcohol",
+        "seleccion_actual": [
+          "edad_x_habito_intestinal"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9034159829329574,
+          "recall": 0.9130280391071757,
+          "f1": 0.8368093337499902,
+          "roc_auc": 0.9724556740178807
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.00023632740469636815,
+          "recall": 0.0,
+          "f1": 0.00036089007697404085,
+          "roc_auc": -3.643812136167046e-05
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "riesgo_familiar_x_edad",
+        "seleccion_actual": [
+          "edad_x_habito_intestinal"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9033393735552652,
+          "recall": 0.913508808337945,
+          "f1": 0.8369009302012957,
+          "roc_auc": 0.9724554255305741
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.00031293678238863976,
+          "recall": 0.0004807692307693401,
+          "f1": 0.00045248652827956093,
+          "roc_auc": -3.668660866829043e-05
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "riesgo_familiar_x_edad",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.8979729633156832,
+          "recall": 0.9135099612617598,
+          "f1": 0.8361356156605592,
+          "roc_auc": 0.9717504691898655
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.00051521179713232,
+          "recall": -0.0004796163069544779,
+          "f1": -7.939639319098912e-05,
+          "roc_auc": 6.697842872371851e-05
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "edad_x_rectorragia",
+        "seleccion_actual": [
+          "edad_x_habito_intestinal"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9029006022952559,
+          "recall": 0.9135076554141304,
+          "f1": 0.8369008060485964,
+          "roc_auc": 0.9723998667764306
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.0007517080423978806,
+          "recall": 0.0004796163069546999,
+          "f1": 0.0004523623755802175,
+          "roc_auc": -9.224536281171591e-05
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "edad_x_sof",
+        "seleccion_actual": [
+          "edad_x_habito_intestinal"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9025641214865331,
+          "recall": 0.913026886183361,
+          "f1": 0.8359073918134341,
+          "roc_auc": 0.9724657760652443
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.0010881888511207194,
+          "recall": -1.152923814640161e-06,
+          "f1": -0.0005410518595820868,
+          "roc_auc": -2.6336073998045606e-05
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "edad_x_rectorragia",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.8973595292910372,
+          "recall": 0.9139895775687142,
+          "f1": 0.8364064537111819,
+          "roc_auc": 0.971568412494085
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.0011286458217782958,
+          "recall": 0.0,
+          "f1": 0.0001914416574317901,
+          "roc_auc": -0.00011507826705681179
+        }
+      }
+    ]
+  },
+  "random_forest": {
+    "modelo": "random_forest",
+    "metricas_base_cv": {
+      "pr_auc": 0.9137955329882377,
+      "recall": 0.848644161593802,
+      "f1": 0.8493298800407709,
+      "roc_auc": 0.9681918298376111
+    },
+    "features_recomendadas": [],
+    "metricas_finales_cv": {
+      "pr_auc": 0.9137955329882377,
+      "recall": 0.848644161593802,
+      "f1": 0.8493298800407709,
+      "roc_auc": 0.9681918298376111
+    },
+    "ganancia_total_vs_base": {
+      "pr_auc": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "roc_auc": 0.0
+    },
+    "ranking_candidatas": [
+      {
+        "paso": 1,
+        "feature_candidata": "edad_x_habito_intestinal",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.916429835204951,
+          "recall": 0.8457606991330013,
+          "f1": 0.8501652962489985,
+          "roc_auc": 0.9705374690930485
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0026343022167133467,
+          "recall": -0.002883462460800623,
+          "f1": 0.0008354162082275796,
+          "roc_auc": 0.002345639255437404
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "edad_x_tenesmus",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9161205959722446,
+          "recall": 0.8481610865154032,
+          "f1": 0.8507299614771439,
+          "roc_auc": 0.9702397594585583
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0023250629840069204,
+          "recall": -0.00048307507839873143,
+          "f1": 0.0014000814363729353,
+          "roc_auc": 0.002047929620947242
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "edad_x_sof",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9158597057653459,
+          "recall": 0.844798007747648,
+          "f1": 0.8475437261850913,
+          "roc_auc": 0.9698993393674931
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.002064172777108242,
+          "recall": -0.0038461538461539435,
+          "f1": -0.0017861538556795953,
+          "roc_auc": 0.0017075095298819676
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "n_sintomas",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9153797122548626,
+          "recall": 0.8471995480538647,
+          "f1": 0.8481426723165046,
+          "roc_auc": 0.9689489584872952
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0015841792666249077,
+          "recall": -0.0014446135399373006,
+          "f1": -0.0011872077242662815,
+          "roc_auc": 0.0007571286496841356
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "edad_x_rectorragia",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9151286475614642,
+          "recall": 0.8500853163622948,
+          "f1": 0.8489701041764647,
+          "roc_auc": 0.969408477040632
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0013331145732264904,
+          "recall": 0.001441154768492825,
+          "f1": -0.0003597758643062443,
+          "roc_auc": 0.0012166472030209485
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "sof_x_tenesmus",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9151236564051175,
+          "recall": 0.846239162516141,
+          "f1": 0.8483503500768247,
+          "roc_auc": 0.9692941685829549
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0013281234168798228,
+          "recall": -0.0024049990776610075,
+          "f1": -0.0009795299639462351,
+          "roc_auc": 0.0011023387453438227
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "tabaco_x_alcohol",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9151198294608696,
+          "recall": 0.8462391625161411,
+          "f1": 0.8471879214620237,
+          "roc_auc": 0.9693027915221574
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0013242964726318807,
+          "recall": -0.0024049990776608965,
+          "f1": -0.002141958578747216,
+          "roc_auc": 0.0011109616845462744
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "riesgo_familiar_x_edad",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9145609806346033,
+          "recall": 0.8457606991330013,
+          "f1": 0.8474974970155262,
+          "roc_auc": 0.9691125207812729
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0007654476463656579,
+          "recall": -0.002883462460800623,
+          "f1": -0.0018323830252446882,
+          "roc_auc": 0.0009206909436617616
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "edad_x_tabaco",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9138178174391955,
+          "recall": 0.843839928057554,
+          "f1": 0.8429557009251857,
+          "roc_auc": 0.9691264367865479
+        },
+        "ganancia_marginal": {
+          "pr_auc": 2.2284450957865687e-05,
+          "recall": -0.004804233536247926,
+          "f1": -0.006374179115585243,
+          "roc_auc": 0.000934606948936767
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "sof_x_rectorragia",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9138157337990949,
+          "recall": 0.8510468548238332,
+          "f1": 0.8511054142037396,
+          "roc_auc": 0.9685317486574524
+        },
+        "ganancia_marginal": {
+          "pr_auc": 2.0200810857184948e-05,
+          "recall": 0.002402693230031283,
+          "f1": 0.0017755341629687171,
+          "roc_auc": 0.00033991881984130057
+        }
+      }
+    ]
+  },
+  "xgboost": {
+    "modelo": "xgboost",
+    "metricas_base_cv": {
+      "pr_auc": 0.9316240853086363,
+      "recall": 0.8486372440509132,
+      "f1": 0.8622957476547415,
+      "roc_auc": 0.9773959948142776
+    },
+    "features_recomendadas": [
+      "n_sintomas",
+      "riesgo_familiar_x_edad"
+    ],
+    "metricas_finales_cv": {
+      "pr_auc": 0.9332746094336277,
+      "recall": 0.8510410902047593,
+      "f1": 0.8657851387558194,
+      "roc_auc": 0.9776722239026743
+    },
+    "ganancia_total_vs_base": {
+      "pr_auc": 0.0016505241249914482,
+      "recall": 0.0024038461538460343,
+      "f1": 0.003489391101077932,
+      "roc_auc": 0.00027622908839664007
+    },
+    "ranking_candidatas": [
+      {
+        "paso": 1,
+        "feature_candidata": "n_sintomas",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9327155775464133,
+          "recall": 0.8467199317469103,
+          "f1": 0.862630163228373,
+          "roc_auc": 0.9776535830580638
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0010914922377770475,
+          "recall": -0.0019173123040029383,
+          "f1": 0.0003344155736315635,
+          "roc_auc": 0.0002575882437861887
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "edad_x_tenesmus",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9323716619490028,
+          "recall": 0.8476803172846339,
+          "f1": 0.8623301809119249,
+          "roc_auc": 0.9772951590948932
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0007475766403665096,
+          "recall": -0.0009569267662793424,
+          "f1": 3.443325718344159e-05,
+          "roc_auc": -0.00010083571938446223
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "sof_x_tenesmus",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.932354769230751,
+          "recall": 0.8491214720531268,
+          "f1": 0.8636063422172363,
+          "roc_auc": 0.9776611930713432
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0007306839221147277,
+          "recall": 0.00048422800221359363,
+          "f1": 0.0013105945624948268,
+          "roc_auc": 0.00026519825706561306
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "riesgo_familiar_x_edad",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9323378228090087,
+          "recall": 0.8500818575908504,
+          "f1": 0.8645702839138257,
+          "roc_auc": 0.9775537291141763
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0007137375003724022,
+          "recall": 0.0014446135399371896,
+          "f1": 0.0022745362590842477,
+          "roc_auc": 0.00015773429989862642
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "edad_x_rectorragia",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9323248811650988,
+          "recall": 0.8457549345139274,
+          "f1": 0.8610336248797731,
+          "roc_auc": 0.977457690560404
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0007007958564625438,
+          "recall": -0.002882309536985872,
+          "f1": -0.0012621227749683994,
+          "roc_auc": 6.169574612635564e-05
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "riesgo_familiar_x_edad",
+        "seleccion_actual": [
+          "n_sintomas"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9332746094336277,
+          "recall": 0.8510410902047593,
+          "f1": 0.8657851387558194,
+          "roc_auc": 0.9776722239026743
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.0005590318872144007,
+          "recall": 0.004321158457848973,
+          "f1": 0.0031549755274463687,
+          "roc_auc": 1.8640844610451346e-05
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "edad_x_tenesmus",
+        "seleccion_actual": [
+          "n_sintomas"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9331614005461202,
+          "recall": 0.8486418557461721,
+          "f1": 0.8662874576434735,
+          "roc_auc": 0.9776544631471126
+        },
+        "ganancia_marginal": {
+          "pr_auc": 0.00044582299970685746,
+          "recall": 0.001921923999261832,
+          "f1": 0.0036572944151004316,
+          "roc_auc": 8.800890487492552e-07
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "sof_x_tenesmus",
+        "seleccion_actual": [
+          "n_sintomas"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.932794097976838,
+          "recall": 0.8467187788230953,
+          "f1": 0.8622182453562293,
+          "roc_auc": 0.9775790447431829
+        },
+        "ganancia_marginal": {
+          "pr_auc": 7.852043042466672e-05,
+          "recall": -1.152923814973228e-06,
+          "f1": -0.0004119178721437855,
+          "roc_auc": -7.4538314880912e-05
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "sof_x_rectorragia",
+        "seleccion_actual": [
+          "n_sintomas"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9327755901608292,
+          "recall": 0.8486430086699871,
+          "f1": 0.8641455767379231,
+          "roc_auc": 0.9775756676073378
+        },
+        "ganancia_marginal": {
+          "pr_auc": 6.001261441590522e-05,
+          "recall": 0.0019230769230768052,
+          "f1": 0.0015154135095500898,
+          "roc_auc": -7.791545072599604e-05
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "edad_x_rectorragia",
+        "seleccion_actual": [
+          "n_sintomas"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9327435242555335,
+          "recall": 0.8481587806677734,
+          "f1": 0.8637023480948696,
+          "roc_auc": 0.9776028859186898
+        },
+        "ganancia_marginal": {
+          "pr_auc": 2.7946709120207913e-05,
+          "recall": 0.0014388489208631006,
+          "f1": 0.0010721848664965172,
+          "roc_auc": -5.069713937400078e-05
+        }
+      },
+      {
+        "paso": 3,
+        "feature_candidata": "edad_x_tenesmus",
+        "seleccion_actual": [
+          "n_sintomas",
+          "riesgo_familiar_x_edad"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9329359608263206,
+          "recall": 0.8481576277439586,
+          "f1": 0.8643342336137918,
+          "roc_auc": 0.9776712449915845
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.00033864860730714597,
+          "recall": -0.002883462460800623,
+          "f1": -0.0014509051420276142,
+          "roc_auc": -9.789110897440167e-07
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "tabaco_x_alcohol",
+        "seleccion_actual": [
+          "n_sintomas"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9323674297732092,
+          "recall": 0.8476780114370042,
+          "f1": 0.8640797967960436,
+          "roc_auc": 0.9775128454331613
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.0003481477732041327,
+          "recall": 0.0009580796900938715,
+          "f1": 0.001449633567670583,
+          "roc_auc": -0.0001407376249025205
+        }
+      },
+      {
+        "paso": 3,
+        "feature_candidata": "sof_x_tenesmus",
+        "seleccion_actual": [
+          "n_sintomas",
+          "riesgo_familiar_x_edad"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9329040458206348,
+          "recall": 0.8471983951300499,
+          "f1": 0.8639796419075022,
+          "roc_auc": 0.9776277726027492
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.0003705636129929246,
+          "recall": -0.003842695074709357,
+          "f1": -0.0018054968483172118,
+          "roc_auc": -4.445129992503016e-05
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "tabaco_x_alcohol",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9312504300579123,
+          "recall": 0.850561473897805,
+          "f1": 0.8644373966229523,
+          "roc_auc": 0.9774608184928407
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.0003736552507239699,
+          "recall": 0.0019242298468917785,
+          "f1": 0.0021416489682107853,
+          "roc_auc": 6.482367856308624e-05
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "edad_x_sof",
+        "seleccion_actual": [
+          "n_sintomas"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9323342668045246,
+          "recall": 0.8476768585131895,
+          "f1": 0.8644634384048242,
+          "roc_auc": 0.9773128281894312
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.0003813107418887407,
+          "recall": 0.0009569267662792313,
+          "f1": 0.0018332751764511546,
+          "roc_auc": -0.00034075486863260895
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "edad_x_sof",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9311592578535002,
+          "recall": 0.8486407028223575,
+          "f1": 0.8637439857936154,
+          "roc_auc": 0.9773385405388064
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.00046482745513609647,
+          "recall": 3.45877144425355e-06,
+          "f1": 0.0014482381388739585,
+          "roc_auc": -5.7454275471213734e-05
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "edad_x_habito_intestinal",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9311503551793419,
+          "recall": 0.8496022412838959,
+          "f1": 0.8641052561520531,
+          "roc_auc": 0.9775608980087787
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.00047373012929441405,
+          "recall": 0.0009649972329827117,
+          "f1": 0.0018095084973116515,
+          "roc_auc": 0.00016490319450102042
+        }
+      },
+      {
+        "paso": 3,
+        "feature_candidata": "sof_x_rectorragia",
+        "seleccion_actual": [
+          "n_sintomas",
+          "riesgo_familiar_x_edad"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9327377887522754,
+          "recall": 0.8467176258992806,
+          "f1": 0.8637027178595755,
+          "roc_auc": 0.9775952587189686
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.0005368206813523013,
+          "recall": -0.004323464305478697,
+          "f1": -0.002082420896243886,
+          "roc_auc": -7.696518370570171e-05
+        }
+      },
+      {
+        "paso": 3,
+        "feature_candidata": "tabaco_x_alcohol",
+        "seleccion_actual": [
+          "n_sintomas",
+          "riesgo_familiar_x_edad"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.932706343107346,
+          "recall": 0.8505626268216198,
+          "f1": 0.8646636103152403,
+          "roc_auc": 0.9777897225936403
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.0005682663262817078,
+          "recall": -0.00047846338313950465,
+          "f1": -0.0011215284405791115,
+          "roc_auc": 0.0001174986909660003
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "sof_x_rectorragia",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.9309553866898961,
+          "recall": 0.8510468548238332,
+          "f1": 0.86530398116623,
+          "roc_auc": 0.9773151104057032
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.0006686986187401933,
+          "recall": 0.0024096107729200122,
+          "f1": 0.0030082335114884895,
+          "roc_auc": -8.088440857445534e-05
+        }
+      },
+      {
+        "paso": 3,
+        "feature_candidata": "edad_x_rectorragia",
+        "seleccion_actual": [
+          "n_sintomas",
+          "riesgo_familiar_x_edad"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9325857562054314,
+          "recall": 0.8452764711307876,
+          "f1": 0.8635053613855378,
+          "roc_auc": 0.9775961552783572
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.00068885322819634,
+          "recall": -0.005764619073971633,
+          "f1": -0.0022797773702816215,
+          "roc_auc": -7.606862431708272e-05
+        }
+      },
+      {
+        "paso": 3,
+        "feature_candidata": "edad_x_sof",
+        "seleccion_actual": [
+          "n_sintomas",
+          "riesgo_familiar_x_edad"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9325386369808705,
+          "recall": 0.8452776240546026,
+          "f1": 0.8638996040131672,
+          "roc_auc": 0.9775335042524986
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.0007359724527572498,
+          "recall": -0.00576346615015666,
+          "f1": -0.001885534742652184,
+          "roc_auc": -0.00013871965017564492
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "edad_x_habito_intestinal",
+        "seleccion_actual": [
+          "n_sintomas"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9319101972375702,
+          "recall": 0.8471983951300498,
+          "f1": 0.8646117192165373,
+          "roc_auc": 0.9775758423361645
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.0008053803088431399,
+          "recall": 0.00047846338313950465,
+          "f1": 0.0019815559881642963,
+          "roc_auc": -7.774072189936643e-05
+        }
+      },
+      {
+        "paso": 3,
+        "feature_candidata": "edad_x_habito_intestinal",
+        "seleccion_actual": [
+          "n_sintomas",
+          "riesgo_familiar_x_edad"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9324653039464031,
+          "recall": 0.8472007009776794,
+          "f1": 0.8639759510401428,
+          "roc_auc": 0.9776118980591925
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.0008093054872245764,
+          "recall": -0.0038403892270798545,
+          "f1": -0.001809187715676619,
+          "roc_auc": -6.0325843481812136e-05
+        }
+      },
+      {
+        "paso": 1,
+        "feature_candidata": "edad_x_tabaco",
+        "seleccion_actual": [],
+        "metricas_cv": {
+          "pr_auc": 0.930648855039142,
+          "recall": 0.8491203191293119,
+          "f1": 0.8633958927118736,
+          "roc_auc": 0.9771918456634596
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.0009752302694943094,
+          "recall": 0.0004830750783986204,
+          "f1": 0.0011001450571320737,
+          "roc_auc": -0.00020414915081801155
+        }
+      },
+      {
+        "paso": 3,
+        "feature_candidata": "edad_x_tabaco",
+        "seleccion_actual": [
+          "n_sintomas",
+          "riesgo_familiar_x_edad"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9322339979001766,
+          "recall": 0.8476791643608189,
+          "f1": 0.8627559018551952,
+          "roc_auc": 0.9776124702244893
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.0010406115334511412,
+          "recall": -0.00336192584394035,
+          "f1": -0.003029236900624177,
+          "roc_auc": -5.975367818500388e-05
+        }
+      },
+      {
+        "paso": 2,
+        "feature_candidata": "edad_x_tabaco",
+        "seleccion_actual": [
+          "n_sintomas"
+        ],
+        "metricas_cv": {
+          "pr_auc": 0.9311437135364207,
+          "recall": 0.8486407028223575,
+          "f1": 0.862692482220103,
+          "roc_auc": 0.9774351713087246
+        },
+        "ganancia_marginal": {
+          "pr_auc": -0.0015718640099926517,
+          "recall": 0.0019207710754471918,
+          "f1": 6.231899172992605e-05,
+          "roc_auc": -0.00021841174933923124
+        }
+      }
+    ]
+  }
+}
