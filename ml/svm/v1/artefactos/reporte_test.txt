@@ -1,0 +1,31 @@
+Evaluacion baseline: svm
+
+Registros en test: 1520
+
+Metricas validacion:
+{
+  "accuracy": 0.9375,
+  "recall": 0.907051282051282,
+  "f1": 0.8562783661119516,
+  "roc_auc": 0.9586039650195279,
+  "pr_auc": 0.8837370386719513
+}
+
+Metricas test:
+{
+  "accuracy": 0.9269736842105263,
+  "recall": 0.8910256410256411,
+  "f1": 0.8335832083958021,
+  "roc_auc": 0.9478105365936492,
+  "pr_auc": 0.8432101929934879
+}
+
+Classification report:
+              precision    recall  f1-score   support
+
+           0     0.9708    0.9363    0.9532      1208
+           1     0.7831    0.8910    0.8336       312
+
+    accuracy                         0.9270      1520
+   macro avg     0.8770    0.9136    0.8934      1520
+weighted avg     0.9323    0.9270    0.9287      1520

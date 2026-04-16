@@ -34,6 +34,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
+from sklearn.svm import SVC
 
 FEATURES_GENERADAS = ["n_sintomas", "riesgo_familiar_x_edad"]
 EXPLICACION_FEATURES = {
@@ -57,11 +58,13 @@ def obtener_rutas(raiz: Path) -> dict:
         "regresion_logistica": raiz / "ml" / "regresion_logistica" / "v1" / "artefactos",
         "random_forest": raiz / "ml" / "random_forest" / "v1" / "artefactos",
         "xgboost": raiz / "ml" / "xgboost" / "v1" / "artefactos",
+        "svm": raiz / "ml" / "svm" / "v1" / "artefactos",
     }
     rutas["comun"].mkdir(parents=True, exist_ok=True)
     rutas["regresion_logistica"].mkdir(parents=True, exist_ok=True)
     rutas["random_forest"].mkdir(parents=True, exist_ok=True)
     rutas["xgboost"].mkdir(parents=True, exist_ok=True)
+    rutas["svm"].mkdir(parents=True, exist_ok=True)
     return rutas
 
 
@@ -96,6 +99,12 @@ def crear_modelo(
             remainder="drop",
         )
         clasificador = LogisticRegression(max_iter=2000, random_state=42, class_weight="balanced")
+    elif nombre_modelo == "svm":
+        preprocesado = ColumnTransformer(
+            transformers=[("numerico", imputador_y_escalado, columnas_modelo)],
+            remainder="drop",
+        )
+        clasificador = SVC(kernel="rbf", probability=True, class_weight="balanced", random_state=42)
     elif nombre_modelo == "random_forest":
         preprocesado = ColumnTransformer(
             transformers=[("numerico", imputador, columnas_modelo)],
@@ -261,7 +270,7 @@ def cargar_artefactos_modelo(ruta_modelo: Path) -> dict | None:
 
 def construir_tabla_comparacion(rutas: dict) -> pd.DataFrame:
     filas = []
-    for nombre_modelo in ["regresion_logistica", "random_forest", "xgboost"]:
+    for nombre_modelo in ["regresion_logistica", "random_forest", "xgboost", "svm"]:
         artefactos = cargar_artefactos_modelo(rutas[nombre_modelo])
         if artefactos is None:
             continue
@@ -284,7 +293,7 @@ def construir_tabla_comparacion(rutas: dict) -> pd.DataFrame:
 
 def entrenar_todos_los_baselines(rutas: dict) -> dict:
     resultados = {}
-    for nombre_modelo in ["regresion_logistica", "random_forest", "xgboost"]:
+    for nombre_modelo in ["regresion_logistica", "random_forest", "xgboost", "svm"]:
         resultados[nombre_modelo] = entrenar_y_evaluar_modelo(nombre_modelo, rutas)
     return resultados
 
@@ -328,8 +337,8 @@ def main() -> None:
         )
 
     st.subheader("Matrices de confusion (test)")
-    columnas = st.columns(3)
-    modelos = ["regresion_logistica", "random_forest", "xgboost"]
+    columnas = st.columns(4)
+    modelos = ["regresion_logistica", "random_forest", "xgboost", "svm"]
     for i, nombre_modelo in enumerate(modelos):
         with columnas[i]:
             st.write(f"**{nombre_modelo}**")

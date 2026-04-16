@@ -7,6 +7,7 @@ El archivo `ml/main.py` implementa una aplicacion en `Streamlit` para entrenar, 
 - `regresion_logistica`
 - `random_forest`
 - `xgboost`
+- `svm`
 
 Los tres modelos trabajan sobre el mismo dataset procesado y utilizan el mismo conjunto final de variables de entrada, incluyendo las features derivadas seleccionadas durante la fase de `feature engineering`.
 
@@ -52,6 +53,7 @@ En la interfaz existe un boton, `Mostrar features generadas`, que enseña estas 
 - `LogisticRegression`
 - `RandomForestClassifier`
 - `XGBClassifier`
+- `SVM`
 
 Cada modelo usa un preprocesado numerico adaptado a su naturaleza:
 
@@ -91,6 +93,11 @@ El dataset presenta un desbalanceo moderado (aprox. `3.87 : 1` negativos vs posi
 - `LogisticRegression`: `class_weight="balanced"`
 - `RandomForestClassifier`: `class_weight="balanced_subsample"`
 - `XGBClassifier`: `scale_pos_weight` calculado automaticamente a partir de la proporcion de clases del conjunto de entrenamiento
+- `SVM`: `class_weight="balanced"`, Kernel `RBF`
+
+**Nota técnica sobre SVM:** 
+
+Al igual que la regresión logística, el modelo SVM requiere que las variables estén en la misma escala para funcionar correctamente, por lo que su pipeline incluye un StandardScaler. Además, se configura con probability=True para permitir el cálculo de métricas de área bajo la curva (ROC-AUC y PR-AUC).
 
 Ademas, el particionado es estratificado para conservar la proporcion de clases en `train/val/test`.
 
@@ -114,6 +121,10 @@ Valores usados:
 - Test: `accuracy=0.9211`, `recall=0.8974`, `f1=0.8235`, `roc_auc=0.9725`, `pr_auc=0.9121`
 
 Interpretacion: el balanceo mejora el `recall` de forma clara (p. ej. en test `0.8237 -> 0.8974`) con caidas pequenas en `accuracy`/`f1` y cambios minimos en `pr_auc`/`roc_auc`. Por eso se mantiene, al estar alineado con el objetivo de detectar positivos.
+
+
+En el caso de SVM, el uso de class_weight="balanced" ajusta automáticamente los pesos de las clases inversamente proporcionales a sus frecuencias en los datos de entrada, penalizando más los errores en la clase positiva (cáncer detectado).
+
 
 ## Artefactos generados
 
