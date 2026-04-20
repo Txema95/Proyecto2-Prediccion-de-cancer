@@ -41,3 +41,13 @@ Los datasets deben cubrir como mínimo:
 - **Vídeo** del simulador funcional y **manual de usuario** en **inglés** (demostración y guía con pasos y ejemplos).
 
 Al implementar, anticipar documentación, tests, métricas y materiales en inglés para vídeo y manual, y mantener trazabilidad con las rúbricas del curso (M3RA1–M3RA4) cuando aplique cada artefacto.
+
+## Regla de idioma para scripts y automatizaciones
+
+En scripts del proyecto (por ejemplo, en `data/scripts/`, `ml/` y utilidades de preparación de datos), usar español en:
+
+- nombres de variables y funciones cuando sea razonable,
+- mensajes de consola, errores y descripciones de argumentos CLI,
+- comentarios y docstrings.
+
+Excepción: mantener en inglés los nombres de columnas, claves, formatos o interfaces que deban permanecer estables por compatibilidad técnica (por ejemplo, `manifest.csv`, `group_id`, `label`, `train/val/test`).
