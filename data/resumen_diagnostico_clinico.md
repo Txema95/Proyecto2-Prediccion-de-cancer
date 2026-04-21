@@ -1,4 +1,4 @@
-# Resumen: análisis y preparación de datos
+# Resumen: análisis y preparación de datos (diagnóstico clínico tabular)
 
 Documento vivo del flujo de datos del simulador (cáncer de colon). Los scripts viven en `data/scripts/cleaning/` (limpieza) y `data/scripts/analysis/` (tipos, EDA).
 
