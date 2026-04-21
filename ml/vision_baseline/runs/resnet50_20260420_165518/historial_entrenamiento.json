@@ -1,0 +1,222 @@
+[
+  {
+    "epoca": 1,
+    "train_loss": 0.2746879737856764,
+    "val_loss": 0.002168937246854815,
+    "val_metrics": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "confusion_matrix": [
+        [
+          92,
+          0
+        ],
+        [
+          0,
+          92
+        ]
+      ]
+    }
+  },
+  {
+    "epoca": 2,
+    "train_loss": 0.02677394213080448,
+    "val_loss": 0.0032177614514239394,
+    "val_metrics": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "confusion_matrix": [
+        [
+          92,
+          0
+        ],
+        [
+          0,
+          92
+        ]
+      ]
+    }
+  },
+  {
+    "epoca": 3,
+    "train_loss": 0.014636474707045695,
+    "val_loss": 0.0008692012538299801,
+    "val_metrics": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "confusion_matrix": [
+        [
+          92,
+          0
+        ],
+        [
+          0,
+          92
+        ]
+      ]
+    }
+  },
+  {
+    "epoca": 4,
+    "train_loss": 0.0048700699223668265,
+    "val_loss": 0.0006875095005085541,
+    "val_metrics": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "confusion_matrix": [
+        [
+          92,
+          0
+        ],
+        [
+          0,
+          92
+        ]
+      ]
+    }
+  },
+  {
+    "epoca": 5,
+    "train_loss": 0.007372505343104572,
+    "val_loss": 0.002851754789825615,
+    "val_metrics": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "confusion_matrix": [
+        [
+          92,
+          0
+        ],
+        [
+          0,
+          92
+        ]
+      ]
+    }
+  },
+  {
+    "epoca": 6,
+    "train_loss": 0.002444791963172464,
+    "val_loss": 0.00017463399802863933,
+    "val_metrics": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "confusion_matrix": [
+        [
+          92,
+          0
+        ],
+        [
+          0,
+          92
+        ]
+      ]
+    }
+  },
+  {
+    "epoca": 7,
+    "train_loss": 0.001953495355452723,
+    "val_loss": 0.00021525270531223364,
+    "val_metrics": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "confusion_matrix": [
+        [
+          92,
+          0
+        ],
+        [
+          0,
+          92
+        ]
+      ]
+    }
+  },
+  {
+    "epoca": 8,
+    "train_loss": 0.003481682969071209,
+    "val_loss": 0.0001675885472227634,
+    "val_metrics": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "confusion_matrix": [
+        [
+          92,
+          0
+        ],
+        [
+          0,
+          92
+        ]
+      ]
+    }
+  },
+  {
+    "epoca": 9,
+    "train_loss": 0.0008230297352735716,
+    "val_loss": 6.892788767428233e-05,
+    "val_metrics": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "confusion_matrix": [
+        [
+          92,
+          0
+        ],
+        [
+          0,
+          92
+        ]
+      ]
+    }
+  },
+  {
+    "epoca": 10,
+    "train_loss": 0.0004310266441834415,
+    "val_loss": 9.873982849484264e-05,
+    "val_metrics": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "confusion_matrix": [
+        [
+          92,
+          0
+        ],
+        [
+          0,
+          92
+        ]
+      ]
+    }
+  }
+]

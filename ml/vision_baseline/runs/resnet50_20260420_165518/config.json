@@ -1,0 +1,12 @@
+{
+  "modelo": "resnet50",
+  "ruta_splits": "C:\\workspace\\Proyecto_deteccion_de_cancer\\Proyecto2-Prediccion-de-cancer\\data\\processed\\splits.csv",
+  "salida_dir": "C:\\workspace\\Proyecto_deteccion_de_cancer\\Proyecto2-Prediccion-de-cancer\\ml\\vision_baseline\\runs\\resnet50_20260420_165518",
+  "epocas": 10,
+  "batch_size": 16,
+  "learning_rate": 0.0001,
+  "weight_decay": 0.0001,
+  "semilla": 42,
+  "workers": 0,
+  "metrica_checkpoint": "val_recall"
+}
