@@ -12,6 +12,61 @@ Todos asumen la **raíz del repositorio** como referencia (suben tres niveles de
 
 ---
 
+## Fuentes de los datos
+
+| Conjunto | Uso en el proyecto | Enlace |
+| -------- | ------------------ | ------ |
+| **CVC-ClinicDB** | Imágenes de **pólipos** (clase positiva) y `metadata.csv` con rutas y `sequence_id`. | [Kaggle — balraj98/cvcclinicdb](https://www.kaggle.com/datasets/balraj98/cvcclinicdb) |
+| **Kvasir** | Imágenes de **mucosa normal** (clase negativa), versión **2** del dataset. | [Simula — Kvasir Dataset](https://datasets.simula.no/kvasir/) → descargar **Kvasir v2** (`kvasir-dataset-v2`) |
+
+Las licencias y condiciones de uso de cada repositorio aplican al descargar y almacenar los datos; conviene citarlas en la documentación del trabajo académico.
+
+---
+
+## Cómo colocar los datos en el repositorio
+
+Los scripts leen rutas **fijas** bajo `data/raw/`. Sin esa estructura, fallarán con `FileNotFoundError` o no encontrarán categorías.
+
+### CVC-ClinicDB → `data/raw/polipos/`
+
+1. Descarga el dataset desde Kaggle (enlace arriba).
+2. Debe existir el fichero **`data/raw/polipos/metadata.csv`** con al menos las columnas que usa el código: **`png_image_path`** (ruta relativa a la carpeta de trabajo de las imágenes CVC) y **`sequence_id`** (para agrupar secuencias en el manifiesto y en los splits).
+3. Todas las imágenes referenciadas en `png_image_path` deben existir en disco de forma que **`data/raw/polipos/` + ruta relativa del CSV** sea un fichero válido. En la práctica suele bastar con copiar el `metadata.csv` del release y la carpeta de PNG (o equivalente) dentro de `data/raw/polipos/`, respetando las rutas que indica el CSV. Si el ZIP trae otra jerarquía, **reorganiza o ajusta** hasta que las rutas del CSV coincidan con la ubicación real bajo `polipos/`.
+
+### Kvasir v2 → `data/raw/kvasir-dataset-v2/`
+
+1. Descarga **Kvasir Dataset v2** desde la página de Simula (enlace arriba).
+2. Descomprime el contenido de forma que exista exactamente esta carpeta en la raíz del proyecto:
+
+   `data/raw/kvasir-dataset-v2/`
+
+3. Dentro deben estar (como directorios con imágenes) al menos estas tres subcarpetas usadas por el script de preparación:
+
+   - `normal-cecum`
+   - `normal-pylorus`
+   - `normal-z-line`
+
+   Si al descomprimir aparece un directorio intermedio (p. ej. solo `kvasir-dataset-v2/kvasir-dataset-v2/...`), **mueve o renombra** hasta que las rutas relativas coincidan con lo anterior; el código no busca nombres alternativos.
+
+### Resumen de rutas obligatorias
+
+```
+data/raw/
+├── polipos/
+│   ├── metadata.csv          # CVC: png_image_path, sequence_id, ...
+│   └── ...                  # imágenes según png_image_path
+└── kvasir-dataset-v2/
+    ├── normal-cecum/        # imágenes .png/.jpg/...
+    ├── normal-pylorus/
+    └── normal-z-line/
+```
+
+*(El resto de carpetas de Kvasir v2 pueden coexistir; el script solo lee las tres “normal-*”.)*
+
+Tras comprobar esta estructura, ejecuta los scripts de preparación en el orden indicado al inicio del documento.
+
+---
+
 ## 1. `prepare_processed_data.py`
 
 **Objetivo:** poblar `data/processed/polipo/` y `data/processed/sano/` a partir de datos en bruto.
