@@ -35,13 +35,28 @@ def render() -> None:
         st.metric("Probabilidad tabular", f"{prob_tabular:.2%}", border=True)
         st.write(etiqueta_desde_probabilidad(prob_tabular))
     with col_b:
-        if resultado_imagen["estado"] == "sin_imagen":
-            st.info("Sin prediccion por imagen")
-        elif resultado_imagen["estado"] == "modelo_no_disponible":
-            st.warning("Modelo de imagen no integrado")
-        else:
-            st.info("Modelo de imagen detectado (integracion pendiente)")
-        st.caption(resultado_imagen["mensaje"])
+        pred_k = st.session_state.get(state.PRED_KVASIR)
+        if pred_k and isinstance(pred_k, list) and any(
+            p and not p.get("error") for p in pred_k
+        ):
+            st.markdown("**Vision (Kvasir, local)**")
+            for p in pred_k:
+                if not p:
+                    continue
+                if p.get("error"):
+                    st.warning(f"{p.get('archivo', 'archivo')}: {p['error']}")
+                else:
+                    st.write(
+                        f"**{p.get('archivo', '?')}** → {p.get('clase_presentacion', '')} "
+                        f"({p.get('confianza', 0):.0%})"
+                    )
+        elif pred_k and all(p and p.get("error") for p in pred_k):
+            st.warning("Comprobacion Kvasir no disponible; define `KVASIR_MODELO_PESOS` o entrena un run.")
+        elif not pred_k:
+            st.info("Carga imagenes en el paso 2 para la comprobacion Kvasir (modelo local).")
+        msg_api = resultado_imagen.get("mensaje") or ""
+        if msg_api:
+            st.caption(f"Nota API (riesgo combinado en servidor): {msg_api}")
     with col_c:
         st.metric("Probabilidad combinada", f"{prob_combinada:.2%}", border=True)
         st.write(etiqueta_desde_probabilidad(prob_combinada))

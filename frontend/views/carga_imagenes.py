@@ -1,21 +1,66 @@
-"""Paso 2: carga de imagenes adjuntas al caso."""
+"""Paso 2: carga de imagenes adjuntas al caso y comprobacion con el modelo Kvasir (multiclase)."""
 
+import pandas as pd
 import streamlit as st
 
 from config import MAX_MB_POR_IMAGEN
 import state
+from servicio_modelo import buscar_raiz_proyecto
+from servicio_vision_kvasir import NOMBRES_CLASE_KVASIR, predecir_fichero_uploader
+
+
+def _mostrar_prediccion_kvasir(p: dict) -> None:
+    nombre = p.get("archivo", "imagen")
+    if p.get("error"):
+        st.error(f"**{nombre}:** {p['error']}")
+        return
+    st.markdown(f"**{nombre}**")
+    st.success(
+        f"Clase predicha: **{p['clase_presentacion']}** "
+        f"— confianza: {p['confianza']:.1%}"
+    )
+    if p.get("ruta_pesos"):
+        st.caption(f"Checkpoint: `{p['ruta_pesos']}`")
+    filas = [
+        {
+            "Categoria (Kvasir)": NOMBRES_CLASE_KVASIR.get(k, k),
+            "Probabilidad": v,
+        }
+        for k, v in p.get("probabilidades", {}).items()
+    ]
+    if filas:
+        df = pd.DataFrame(filas).sort_values("Probabilidad", ascending=False)
+        df["Prob."] = df["Probabilidad"].map(lambda x: f"{x:.1%}")
+        st.dataframe(
+            df[["Categoria (Kvasir)", "Prob."]],
+            width="stretch",
+            hide_index=True,
+        )
 
 
 def render() -> None:
     st.subheader("2) Carga de imagenes")
-    st.write("Adjunta una o varias imagenes (PNG/JPG/JPEG).")
+    st.write(
+        "Adjunta una o varias imagenes (PNG/JPG/JPEG). Tras la carga se ejecuta el "
+        "modelo entrenado **Kvasir (4 clases)** para una orientacion informativa (no es diagnostico medico)."
+    )
+    try:
+        raiz = buscar_raiz_proyecto()
+    except FileNotFoundError as err:
+        st.error(str(err))
+        return
+
     ficheros = st.file_uploader(
         "Selecciona imagenes",
         type=["png", "jpg", "jpeg"],
         accept_multiple_files=True,
     )
-    imagenes_validas = []
-    if ficheros:
+
+    if not ficheros:
+        st.session_state[state.IMAGENES] = []
+        st.session_state[state.PRED_KVASIR] = None
+    else:
+        imagenes_validas: list = []
         for fichero in ficheros:
             tam_mb = len(fichero.getvalue()) / (1024 * 1024)
             if tam_mb > MAX_MB_POR_IMAGEN:
@@ -29,6 +74,19 @@ def render() -> None:
             for i, fichero in enumerate(imagenes_validas):
                 with columnas[i % len(columnas)]:
                     st.image(fichero, caption=fichero.name, use_container_width=True)
+
+            with st.spinner("Comprobando imagenes con el modelo de vision (Kvasir)..."):
+                predicciones = [predecir_fichero_uploader(raiz, f) for f in imagenes_validas]
+            st.session_state[state.PRED_KVASIR] = predicciones
+
+            st.divider()
+            st.markdown("**Comprobacion con el modelo (baseline Kvasir, ResNet-18)**")
+            for pred in predicciones:
+                with st.container(border=True):
+                    _mostrar_prediccion_kvasir(pred)
+        else:
+            st.session_state[state.PRED_KVASIR] = None
+
     col_izq, col_der = st.columns([1, 1])
     with col_izq:
         if st.button("Volver a datos clinicos", width="stretch"):

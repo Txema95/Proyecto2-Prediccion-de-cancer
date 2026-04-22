@@ -1,0 +1,10 @@
+                    precision    recall  f1-score   support
+
+      normal-cecum     0.9792    0.9400    0.9592       150
+            polyps     0.9463    0.9463    0.9463       149
+dyed-lifted-polyps     0.9867    0.9867    0.9867       150
+ulcerative-colitis     0.9355    0.9732    0.9539       149
+
+          accuracy                         0.9615       598
+         macro avg     0.9619    0.9615    0.9615       598
+      weighted avg     0.9620    0.9615    0.9616       598
