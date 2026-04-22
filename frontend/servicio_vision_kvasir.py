@@ -101,7 +101,7 @@ def predecir_bytes_imagen(raiz: Path, datos: bytes) -> dict[str, Any]:
     clave = indice_a_clase(k)
     nombre_largo = NOMBRES_CLASE_KVASIR.get(clave, clave)
     probs = {CLASES_ORDEN[i]: float(pr[i]) for i in range(n_c)}
-    return {
+    salida: dict[str, Any] = {
         "error": None,
         "id_clase": k,
         "clase_tecnica": clave,
@@ -111,7 +111,23 @@ def predecir_bytes_imagen(raiz: Path, datos: bytes) -> dict[str, Any]:
         "vector_prob": [float(pr[i]) for i in range(n_c)],
         "etiquetas_orden": list(CLASES_ORDEN[:n_c]),
         "ruta_pesos": str(ruta),
+        "gradcam_error": None,
+        "gradcam_superposicion": None,
     }
+    try:
+        from ml.vision_baseline_kvasir.gradcam import (
+            grad_cam_resnet18,
+            superponer_heatmap_sobre_imagen,
+        )
+
+        t_in = transform(im).unsqueeze(0).to(d)
+        hw = int(t_in.shape[2])
+        mapa = grad_cam_resnet18(modelo, t_in, k)
+        sup = superponer_heatmap_sobre_imagen(im, mapa, tam=(hw, hw))
+        salida["gradcam_superposicion"] = sup
+    except Exception as exc:  # noqa: BLE001
+        salida["gradcam_error"] = str(exc)
+    return salida
 
 
 def predecir_fichero_uploader(raiz: Path, fichero: Any) -> dict[str, Any]:

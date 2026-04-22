@@ -36,6 +36,17 @@ def _mostrar_prediccion_kvasir(p: dict) -> None:
             width="stretch",
             hide_index=True,
         )
+    gc = p.get("gradcam_superposicion")
+    ge = p.get("gradcam_error")
+    if ge:
+        st.warning(f"Grad-CAM no disponible: {ge}")
+    elif gc is not None:
+        st.markdown("**Grad-CAM** (zonas que mas influyen en la clase predicha arriba)")
+        st.caption(
+            "Colormap *jet*: rojo = mayor peso en la decision para esa clase. "
+            "Imagen internamente a 224 px como en el entrenamiento."
+        )
+        st.image(gc, caption="Superposicion Grad-CAM + imagen", use_container_width=True)
 
 
 def render() -> None:

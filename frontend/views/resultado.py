@@ -50,6 +50,14 @@ def render() -> None:
                         f"**{p.get('archivo', '?')}** → {p.get('clase_presentacion', '')} "
                         f"({p.get('confianza', 0):.0%})"
                     )
+                    if p.get("gradcam_superposicion") is not None:
+                        st.image(
+                            p["gradcam_superposicion"],
+                            caption="Grad-CAM (clase predicha)",
+                            use_container_width=True,
+                        )
+                    elif p.get("gradcam_error"):
+                        st.caption(f"Grad-CAM: {p['gradcam_error'][:120]}")
         elif pred_k and all(p and p.get("error") for p in pred_k):
             st.warning("Comprobacion Kvasir no disponible; define `KVASIR_MODELO_PESOS` o entrena un run.")
         elif not pred_k:
