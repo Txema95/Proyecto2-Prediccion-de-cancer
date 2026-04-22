@@ -1,8 +1,16 @@
 """
 Entrena un baseline multiclase (ResNet-18) sobre `splits_kvasir_multiclase.csv`.
 
+Train: rotación, flip y ajuste de brillo/contraste (v. `dataset_torch`) para reducir
+memorización; val/test sin aug.
+
+Early stopping por F1 macro en val (criterio del checkpoint, p. ej. paciencia 4) salvo
+`--sin-early-stopping`. Epocas por defecto 30 como tope; suele detenerse antes.
+
 Uso (raíz del repo):
-    uv run python ml/vision_baseline_kvasir/entrenar.py --epocas 10
+    uv run python ml/vision_baseline_kvasir/entrenar.py
+    uv run python ml/vision_baseline_kvasir/entrenar.py --epocas 40 --paciencia-early 5
+    uv run python ml/vision_baseline_kvasir/entrenar.py --sin-early-stopping --epocas 10
 """
 
 from __future__ import annotations
@@ -44,6 +52,7 @@ class ConfigEntrenar:
     raiz: str
     salida: str
     epocas: int
+    epocas_ejecutadas: int | None
     batch: int
     lr: float
     weight_decay: float
@@ -51,6 +60,10 @@ class ConfigEntrenar:
     workers: int
     tam_imagen: int
     dispositivo: str
+    early_stopping: bool
+    paciencia_early: int
+    min_delta_f1_val: float
+    detenido_por_early_stopping: bool | None
 
 
 def fijar_semillas(semilla: int) -> None:
@@ -127,11 +140,33 @@ def main() -> None:
         default=r / "data" / "processed" / "kvasir_min_clean" / "splits_kvasir_multiclase.csv",
     )
     p.add_argument("--output-dir", type=Path, default=r / "ml" / "vision_baseline_kvasir" / "runs")
-    p.add_argument("--epocas", type=int, default=10)
+    p.add_argument(
+        "--epocas",
+        type=int,
+        default=30,
+        help="Maximo de epocas; con early stopping suele parar antes (historial: F1 sube en 8-10 ep. salvo ruido).",
+    )
     p.add_argument("--batch", type=int, default=32)
     p.add_argument("--lr", type=float, default=1e-4)
     p.add_argument("--weight-decay", type=float, default=1e-4)
     p.add_argument("--semilla", type=int, default=42)
+    p.add_argument(
+        "--paciencia-early",
+        type=int,
+        default=4,
+        help="Parar si f1_val_macro no mejora (min-delta) durante N epocas. 4 aguanta oscilaciones puntuales en val.",
+    )
+    p.add_argument(
+        "--min-delta-f1-val",
+        type=float,
+        default=1e-4,
+        help="Mejora minima en F1 macro (val) para contar como progreso frente a overfitting/ruido.",
+    )
+    p.add_argument(
+        "--sin-early-stopping",
+        action="store_true",
+        help="Entrena siempre el maximo de epocas (p. ej. para comparar con correr antiguas).",
+    )
     p.add_argument(
         "--workers",
         type=int,
@@ -157,7 +192,12 @@ def main() -> None:
     print("=== Entrenamiento vision_baseline_kvasir (ResNet-18) ===", flush=True)
     print(f"  splits: {a.splits}", flush=True)
     print(f"  dispositivo: {dispositivo}", flush=True)
-    print(f"  batch={a.batch}  workers={a.workers}  epocas={a.epocas}", flush=True)
+    es_on = not a.sin_early_stopping
+    print(
+        f"  batch={a.batch}  workers={a.workers}  epocas_max={a.epocas}  "
+        f"early_stopping={es_on}  paciencia={a.paciencia_early}  min_delta_f1={a.min_delta_f1_val}",
+        flush=True,
+    )
 
     tr_t = transformaciones_imagenet_entrenamiento(a.tam_imagen)
     ev_t = transformaciones_imagenet_eval(a.tam_imagen)
@@ -193,6 +233,7 @@ def main() -> None:
         raiz=r.as_posix(),
         salida=run.as_posix(),
         epocas=a.epocas,
+        epocas_ejecutadas=None,
         batch=a.batch,
         lr=a.lr,
         weight_decay=a.weight_decay,
@@ -200,6 +241,10 @@ def main() -> None:
         workers=a.workers,
         tam_imagen=a.tam_imagen,
         dispositivo=str(dispositivo),
+        early_stopping=es_on,
+        paciencia_early=a.paciencia_early,
+        min_delta_f1_val=a.min_delta_f1_val,
+        detenido_por_early_stopping=None,
     )
     (run / "config.json").write_text(
         json.dumps(asdict(cfg), indent=2, ensure_ascii=False), encoding="utf-8"
@@ -208,7 +253,11 @@ def main() -> None:
 
     mejor_f1 = -1.0
     historial: list[dict[str, float]] = []
+    epocas_sin_mejora = 0
+    detenido_early = False
+    ultima_epoca = 0
     for ep in range(1, a.epocas + 1):
+        ultima_epoca = ep
         print(f"--- Epoca {ep}/{a.epocas} ---", flush=True)
         p_tr = bucle_epoca(
             modelo,
@@ -224,9 +273,18 @@ def main() -> None:
         yv, yp = evaluar_cargador(modelo, car_v, dispositivo)
         f1m = f1_score(yv, yp, average="macro", zero_division=0)
         acc = accuracy_score(yv, yp)
-        historial.append({"epoca": float(ep), "perdida_train": p_tr, "f1_val_macro": f1m, "acc_val": acc})
-        if f1m > mejor_f1:
+        historial.append(
+            {
+                "epoca": float(ep),
+                "perdida_train": p_tr,
+                "f1_val_macro": f1m,
+                "acc_val": acc,
+            }
+        )
+        mejora = f1m > mejor_f1 + a.min_delta_f1_val
+        if mejora:
             mejor_f1 = f1m
+            epocas_sin_mejora = 0
             extra = "  (nuevo mejor F1 en val, checkpoint guardado)"
             torch.save(
                 {
@@ -238,9 +296,27 @@ def main() -> None:
             )
         else:
             extra = ""
+            if es_on:
+                epocas_sin_mejora += 1
         print(f"  Val: f1_macro={f1m:.4f}  acc={acc:.4f}{extra}", flush=True)
+        if es_on and epocas_sin_mejora >= a.paciencia_early:
+            print(
+                f"  Early stopping: {a.paciencia_early} epocas seguidas sin mejora de "
+                f"f1_val_macro (min_delta={a.min_delta_f1_val}) sobre el mejor = {mejor_f1:.4f}.",
+                flush=True,
+            )
+            detenido_early = True
+            break
     (run / "historial.json").write_text(
         json.dumps(historial, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+
+    cfg_out = asdict(cfg)
+    cfg_out["epocas_ejecutadas"] = ultima_epoca
+    cfg_out["detenido_por_early_stopping"] = detenido_early
+    cfg_out["mejor_f1_val_checkpoint"] = mejor_f1
+    (run / "config.json").write_text(
+        json.dumps(cfg_out, indent=2, ensure_ascii=False), encoding="utf-8"
     )
 
     ultimo = run / "mejor_pesos.pt"

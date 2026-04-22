@@ -1,0 +1,63 @@
+{
+  "run": "/home/mgalindo/Escritorio/masterIA/Proyecto2-Prediccion-de-cancer/ml/vision_baseline_kvasir/runs/resnet18_20260422_190751",
+  "split": "test",
+  "n_muestras": 598,
+  "accuracy": 0.9665551839464883,
+  "f1_macro": 0.9665708588332282,
+  "f1_ponderada": 0.9665870200703025,
+  "roc_auc_macro_ovr": 0.9983959746446598,
+  "roc_auc_por_clase_ovr": {
+    "normal-cecum": 0.997514880952381,
+    "polyps": 0.9975187216932482,
+    "dyed-lifted-polyps": 0.9999553571428571,
+    "ulcerative-colitis": 0.9985949387901527
+  },
+  "p_max_aciertos_media": 0.9843207001686096,
+  "p_max_errores_media": 0.8010934591293335,
+  "entropia_media": 0.06326127797365189,
+  "entropia_aciertos_media": 0.049219995737075806,
+  "entropia_errores_media": 0.46905407309532166,
+  "n_errores": 20,
+  "pares_confusion_principales": [
+    {
+      "verdadero": "normal-cecum",
+      "predicho": "ulcerative-colitis",
+      "conteo": 5
+    },
+    {
+      "verdadero": "normal-cecum",
+      "predicho": "polyps",
+      "conteo": 3
+    },
+    {
+      "verdadero": "polyps",
+      "predicho": "normal-cecum",
+      "conteo": 3
+    },
+    {
+      "verdadero": "dyed-lifted-polyps",
+      "predicho": "polyps",
+      "conteo": 3
+    },
+    {
+      "verdadero": "ulcerative-colitis",
+      "predicho": "normal-cecum",
+      "conteo": 2
+    },
+    {
+      "verdadero": "ulcerative-colitis",
+      "predicho": "polyps",
+      "conteo": 2
+    },
+    {
+      "verdadero": "polyps",
+      "predicho": "dyed-lifted-polyps",
+      "conteo": 1
+    },
+    {
+      "verdadero": "polyps",
+      "predicho": "ulcerative-colitis",
+      "conteo": 1
+    }
+  ]
+}

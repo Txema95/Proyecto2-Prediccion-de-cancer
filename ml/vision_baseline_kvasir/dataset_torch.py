@@ -14,12 +14,22 @@ def _cargar_filas_csv(ruta: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(f))
 
 
-def transformaciones_imagenet_entrenamiento(tam_entrada: int) -> transforms.Compose:
+def transformaciones_imagenet_entrenamiento(
+    tam_entrada: int,
+    *,
+    rotacion_grados: float = 15.0,
+    brillo: float = 0.2,
+    contraste: float = 0.2,
+    saturacion: float = 0.15,
+    matiz: float = 0.04,
+) -> transforms.Compose:
+    """Augmentations solo en train: rotación leve (endoscopía), espejo y photometrica más exigente que el baseline mínimo."""
     return transforms.Compose(
         [
             transforms.Resize((tam_entrada, tam_entrada)),
+            transforms.RandomRotation(degrees=rotacion_grados, fill=0),
             transforms.RandomHorizontalFlip(p=0.5),
-            transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.02),
+            transforms.ColorJitter(brightness=brillo, contrast=contraste, saturation=saturacion, hue=matiz),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ]
