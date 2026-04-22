@@ -30,6 +30,16 @@ def asegurar_path_repo(raiz: Path) -> None:
         sys.path.insert(0, s)
 
 
+def _usar_preprocesado_minimo() -> bool:
+    """Mismo pipeline que `kvasir_preprocesado_minimo.py` (por defecto activado)."""
+    return os.environ.get("KVASIR_SIN_PREPROCESADO", "").strip().lower() not in (
+        "1",
+        "true",
+        "yes",
+        "si",
+    )
+
+
 def resolver_ruta_pesos(raiz: Path) -> Path | None:
     env = os.environ.get("KVASIR_MODELO_PESOS", "").strip()
     if env:
@@ -85,6 +95,7 @@ def predecir_bytes_imagen(raiz: Path, datos: bytes) -> dict[str, Any]:
     asegurar_path_repo(raiz)
     from ml.vision_baseline_kvasir.constantes import CLASES_ORDEN, indice_a_clase
 
+    import numpy as np
     import torch
     from PIL import Image
 
@@ -92,7 +103,17 @@ def predecir_bytes_imagen(raiz: Path, datos: bytes) -> dict[str, Any]:
     d = paquete["device"]
     transform = paquete["transform"]
     n_c = int(paquete["n_clases"])
-    im = Image.open(BytesIO(datos)).convert("RGB")
+    im_bruta = Image.open(BytesIO(datos)).convert("RGB")
+    pre_info: dict[str, Any]
+    if _usar_preprocesado_minimo():
+        from ml.vision_baseline_kvasir.preprocesado_upload import (
+            aplicar_preprocesado_minimo_entrenamiento,
+        )
+
+        im, pre_info = aplicar_preprocesado_minimo_entrenamiento(im_bruta, raiz)
+    else:
+        im = im_bruta
+        pre_info = {"aplicado": False, "motivo": "Desactivado (KVASIR_SIN_PREPROCESADO)."}
     t = transform(im).unsqueeze(0).to(d)
     with torch.inference_mode():
         logits = modelo(t)
@@ -111,6 +132,8 @@ def predecir_bytes_imagen(raiz: Path, datos: bytes) -> dict[str, Any]:
         "vector_prob": [float(pr[i]) for i in range(n_c)],
         "etiquetas_orden": list(CLASES_ORDEN[:n_c]),
         "ruta_pesos": str(ruta),
+        "preprocesado": pre_info,
+        "vista_previa_preprocesado": np.asarray(im),
         "gradcam_error": None,
         "gradcam_superposicion": None,
     }

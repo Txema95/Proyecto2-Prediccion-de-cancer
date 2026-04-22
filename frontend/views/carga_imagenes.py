@@ -15,6 +15,39 @@ def _mostrar_prediccion_kvasir(p: dict) -> None:
         st.error(f"**{nombre}:** {p['error']}")
         return
     st.markdown(f"**{nombre}**")
+    pp = p.get("preprocesado") or {}
+    vp = p.get("vista_previa_preprocesado")
+    if pp.get("aplicado"):
+        st.markdown("##### Preprocesado (alineado con el entrenamiento)")
+        st.caption(
+            "Mismo flujo que `kvasir_preprocesado_minimo.py`: bordes negros, recorte cuadrado, "
+            "salida 512×512; el modelo aplica despues 224×224 + normalizacion ImageNet."
+        )
+        col_pp1, col_pp2 = st.columns(2)
+        with col_pp1:
+            if vp is not None:
+                st.image(
+                    vp,
+                    caption="Imagen enviada al modelo (tras preprocesado; ver tamano en JSON)",
+                    use_container_width=True,
+                )
+        with col_pp2:
+            st.json(
+                {
+                    "size_preprocesado_px": pp.get("size_salida"),
+                    "umbral_negro": pp.get("umbral_negro"),
+                    "padding_fraccion": pp.get("padding_fraccion"),
+                    "recorte_borde_negro": pp.get("recorte_borde_negro"),
+                    "pixeles_recortados_borde": pp.get("pixeles_recortados_borde"),
+                    "original_wh": f"{pp.get('ancho_original')}x{pp.get('alto_original')}",
+                    "tras_recorte_borde_wh": f"{pp.get('ancho_tras_borde')}x{pp.get('alto_tras_borde')}",
+                }
+            )
+    else:
+        st.info(
+            pp.get("motivo", "Preprocesado minimo no aplicado.")
+            + " Puedes activarlo quitando `KVASIR_SIN_PREPROCESADO` del entorno."
+        )
     st.success(
         f"Clase predicha: **{p['clase_presentacion']}** "
         f"— confianza: {p['confianza']:.1%}"
@@ -52,8 +85,9 @@ def _mostrar_prediccion_kvasir(p: dict) -> None:
 def render() -> None:
     st.subheader("2) Carga de imagenes")
     st.write(
-        "Adjunta una o varias imagenes (PNG/JPG/JPEG). Tras la carga se ejecuta el "
-        "modelo entrenado **Kvasir (4 clases)** para una orientacion informativa (no es diagnostico medico)."
+        "Adjunta una o varias imagenes (PNG/JPG/JPEG). Cada imagen pasa por el **preprocesado minimo** "
+        "(`kvasir_preprocesado_minimo`: recorte de viñeta, cuadrado, 512 px) y despues el modelo **ResNet-18** "
+        "Kvasir (4 clases). Solo orientacion; no es diagnostico medico."
     )
     try:
         raiz = buscar_raiz_proyecto()
