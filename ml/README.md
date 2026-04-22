@@ -19,6 +19,12 @@ Desde la raiz del proyecto:
 uv run streamlit run ml/main.py
 ```
 
+Para ejecutar el front del simulador clinico (flujo de datos + imagenes):
+
+```bash
+uv run streamlit run frontend/app.py
+```
+
 ## Flujo general de `main.py`
 
 La aplicacion sigue este flujo:

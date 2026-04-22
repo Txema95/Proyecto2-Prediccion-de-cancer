@@ -1,0 +1,12 @@
+{
+  "modelo": "mobilenet_v2",
+  "ruta_splits": "/home/mgalindo/Escritorio/masterIA/Proyecto2-Prediccion-de-cancer/data/processed/splits.csv",
+  "salida_dir": "/home/mgalindo/Escritorio/masterIA/Proyecto2-Prediccion-de-cancer/ml/vision_baseline/runs/mobilenet_v2_20260421_154402",
+  "epocas": 20,
+  "batch_size": 32,
+  "learning_rate": 0.0001,
+  "weight_decay": 0.0001,
+  "semilla": 42,
+  "workers": 0,
+  "metrica_checkpoint": "val_f1"
+}
