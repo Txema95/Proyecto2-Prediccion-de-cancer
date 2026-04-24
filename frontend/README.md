@@ -11,18 +11,18 @@ La predicción del simulador (pestaña **Diagnosticar**) llama al backend HTTP; 
 
 ## Flujo general: tres pestañas
 
-El punto de entrada es `app.py`. La cabecera fija el título del simulador y bajo ella hay **tres pestañas** (etiquetas definidas en `config.py` como `TAB_CONSULTA`, `TAB_DATOS`, `TAB_IMAGEN`):
+El punto de entrada es `app.py`. La cabecera fija el título del simulador y bajo ella hay **tres pestañas** (etiquetas en `config.py` como `TAB_CONSULTA`, `TAB_DATOS`, `TAB_IMAGEN`):
 
 1. **Diagnosticar**  
-   Asistente por pasos que pide datos clínicos, imágenes opcionales, una revisión del caso y, al final, muestra el resultado (probabilidades vía API y lógica local de imagen cuando aplica). El detalle del recorrido está en la sección siguiente.
+   Asistente por pasos que pide datos clínicos, imágenes opcionales, una revisión del caso y, al final, el resultado (probabilidades vía API y lógica local de imagen cuando aplica).
 
 2. **Diagnóstico con datos (tabular)**  
-   Panel informativo y, si se desea, reentrenamiento de los modelos clásicos (regresión logística, random forest, XGBoost, SVM) a partir del CSV procesado. Lee y escribe artefactos bajo `ml/` en el repositorio. Implementado en `views/explorador_ml.py` (lógica reutilizada desde `ml/main.py`).
+   Panel informativo y, si se desea, reentrenamiento de baselines; `views/explorador_ml.py`.
 
 3. **Diagnóstico con imagen**  
-   Revisión de entrenamientos de visión (carpetas de run bajo `dl/vision_baseline_kvasir/runs/`), métricas y análisis si existen. El simulador usa un checkpoint reciente para inferencia local; ver `servicio_vision_kvasir.py`. Implementado en `views/explorador_dl.py`.
+   Revisión de entrenamientos de visión; `views/explorador_dl.py`.
 
-En cada recarga de la aplicación, Streamlit ejecuta el código de **las tres pestañas**; el usuario solo ve el contenido de la pestaña activa, pero conviene no dejar tareas pesadas en vistas que no lo requieran.
+En cada recarga, Streamlit ejecuta el código de **las tres pestañas**; el usuario solo ve el contenido de la pestaña activa. En predicción (API), carga de imágenes (Kvasir) y reentrenamiento de modelos tabulares se usa **`st.spinner`**.
 
 ## Flujo dentro de la pestaña “Diagnosticar”
 

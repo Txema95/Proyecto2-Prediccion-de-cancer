@@ -530,7 +530,6 @@ dependencies = [
     { name = "seaborn" },
     { name = "shap" },
     { name = "streamlit" },
-    { name = "streamlit-lottie" },
     { name = "torch" },
     { name = "torchvision" },
     { name = "uvicorn", extra = ["standard"] },
@@ -559,7 +558,6 @@ requires-dist = [
     { name = "seaborn", specifier = ">=0.13.0" },
     { name = "shap", specifier = ">=0.51.0" },
     { name = "streamlit", specifier = ">=1.56.0" },
-    { name = "streamlit-lottie", specifier = ">=0.0.5" },
     { name = "torch" },
     { name = "torchvision" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.32.0" },
@@ -2751,18 +2749,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/03/85/7c669b3a1336d34ef39fa9760fbd343185f3b15db2ad0838fd78423d1c7f/streamlit-1.56.0.tar.gz", hash = "sha256:1176acfa89ae1318b79078e8efe689a9d02e8d58e325c00fc0e55fa2f3fe8d6a", size = 8559239, upload-time = "2026-03-31T22:29:38.59Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e4/91/cb6f13a89e376ef179309d74f37a70ea0041d5e4b5ba5c4836dbf6e020ad/streamlit-1.56.0-py3-none-any.whl", hash = "sha256:8677a335734a30a51bc57ad0ec910e365d95f7c456fc02c60032927cd0729dc5", size = 9052089, upload-time = "2026-03-31T22:29:36.342Z" },
-]
-
-[[package]]
-name = "streamlit-lottie"
-version = "0.0.5"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "streamlit" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/4b/d4/e13ac9bde5b81b308d061092a420008af78c8b08547739423195596452d8/streamlit-lottie-0.0.5.tar.gz", hash = "sha256:c61589fb92bdf1dd5bd0a2ea75315d92e3383f46059b3704515d096a1e953d79", size = 792567, upload-time = "2023-06-05T13:54:58.718Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/52/b5/8ad7fa3101ec5baed712107a4cf304f174261f2ed2bebe063ad1fbedfe88/streamlit_lottie-0.0.5-py3-none-any.whl", hash = "sha256:98656d6f1cc99c5d96fb8329bafbcdbb65709ad0a05176dffdf4755f6fc04cff", size = 802386, upload-time = "2023-06-05T13:54:56.542Z" },
 ]
 
 [[package]]

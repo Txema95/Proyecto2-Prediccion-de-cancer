@@ -44,7 +44,9 @@ def render() -> None:
             except Exception as e:
                 st.error(f"Error durante el entrenamiento: {e}")
             else:
-                st.success("Entrenamiento y evaluacion completados. Las tablas e imagenes se actualizan abajo.")
+                st.success(
+                    "Entrenamiento y evaluacion completados. Revisa abajo la tabla y las matrices."
+                )
 
     tabla = ml.construir_tabla_comparacion(rutas)
     if tabla.empty:
