@@ -1,47 +1,51 @@
 """
-Punto de entrada Streamlit del simulador.
+Punto de entrada Streamlit: simulador, panel ML (tabular) y panel DL (Kvasir).
 
-Este fichero concentra la configuracion de pagina, constantes de layout
-compartidas y el despacho al paso actual (vistas en `views/`).
+Configuración de pagina, cabecera con pestañas, vistas en `views/`.
 
-Ejecucion:
+Arranque solo UI:
     uv run streamlit run frontend/app.py
+
+Con API y simulador completo (misma consola, desde la raiz del repo):
+    uv run python main.py
 """
 
 from __future__ import annotations
 
 import streamlit as st
 
-from config import LAYOUT, PAGE_TITLE
-from layout import pintar_encabezado, pintar_progreso
-from servicio_modelo import buscar_raiz_proyecto, cargar_dataset, obtener_rutas
+from config import CABECERA_TITULO, LAYOUT, PAGE_TITLE, TAB_LABELS
+from estilos_clinicos import aplicar_tema_clinico
+from paths import asegurar_sys_path_repo
 from state import inicializar_estado
-from views.carga_imagenes import render as vista_carga_imagenes
-from views.datos_clinicos import render as vista_datos_clinicos
-from views.resultado import render as vista_resultado
-from views.revision_caso import render as vista_revision_caso
-import state
+from views.explorador_dl import render as render_dl
+from views.explorador_ml import render as render_ml
+from views.portal_simulador import render as render_simulador
+
+asegurar_sys_path_repo()
 
 
 def main() -> None:
-    st.set_page_config(page_title=PAGE_TITLE, layout=LAYOUT)
+    st.set_page_config(
+        page_title=PAGE_TITLE,
+        layout=LAYOUT,
+        initial_sidebar_state="collapsed",
+    )
+    aplicar_tema_clinico()
     inicializar_estado()
-    pintar_encabezado()
-    pintar_progreso()
 
-    raiz = buscar_raiz_proyecto()
-    rutas = obtener_rutas(raiz)
-    datos = cargar_dataset(rutas["csv"])
+    st.markdown(
+        f'<p class="app-cabecera-titulo">{CABECERA_TITULO}</p>',
+        unsafe_allow_html=True,
+    )
+    t_consulta, t_datos, t_imagen = st.tabs(TAB_LABELS)
 
-    paso = int(st.session_state[state.PASO_ACTUAL])
-    if paso == 0:
-        vista_datos_clinicos(datos)
-    elif paso == 1:
-        vista_carga_imagenes()
-    elif paso == 2:
-        vista_revision_caso()
-    else:
-        vista_resultado()
+    with t_consulta:
+        render_simulador()
+    with t_datos:
+        render_ml()
+    with t_imagen:
+        render_dl()
 
 
 if __name__ == "__main__":

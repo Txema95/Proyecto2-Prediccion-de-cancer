@@ -8,8 +8,15 @@ MAX_MB_POR_IMAGEN = 8
 
 PASOS = ["Datos clinicos", "Imagenes", "Revision", "Resultado"]
 
-PAGE_TITLE = "Simulador clinico - Cancer colon"
+PAGE_TITLE = "Cancer de colon — simulador y analisis (ML / DL)"
 LAYOUT = "wide"
+
+# Pestañas de la cabecera
+TAB_CONSULTA = "Diagnosticar"
+TAB_DATOS = "Diagnóstico con datos (tabular)"
+TAB_IMAGEN = "Diagnóstico con imagen"
+CABECERA_TITULO = "Simulador de apoyo al diagnóstico de cáncer de colon"
+TAB_LABELS: tuple[str, str, str] = (TAB_CONSULTA, TAB_DATOS, TAB_IMAGEN)
 
 API_BASE_URL = os.environ.get("SIMULATOR_API_BASE_URL", "http://127.0.0.1:8000").rstrip("/")
 

@@ -7,11 +7,15 @@ import state
 
 
 def pintar_encabezado() -> None:
-    st.title("Simulador de apoyo al diagnostico de cancer de colon")
-    st.caption(
-        "Herramienta academica de apoyo a decision. No sustituye el criterio medico profesional."
+    st.markdown(
+        """
+        <div class="clinical-notice">
+        <strong>Uso académico y de apoyo.</strong>
+        No sustituye el criterio clínico profesional ni constituye diagnóstico.
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
-    st.warning("Uso educativo: la salida del simulador no constituye diagnostico clinico.")
 
 
 def pintar_progreso() -> None:

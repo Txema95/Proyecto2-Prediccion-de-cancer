@@ -1,6 +1,0 @@
-{
-  "run": "/home/mgalindo/Escritorio/masterIA/Proyecto2-Prediccion-de-cancer/ml/vision_baseline_kvasir/runs/resnet18_20260422_121534",
-  "split": "test",
-  "accuracy": 0.9615384615384616,
-  "f1_macro": 0.9615266083473305
-}

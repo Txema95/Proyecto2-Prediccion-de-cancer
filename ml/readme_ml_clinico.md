@@ -179,4 +179,4 @@ Se priorizó un conjunto pequeño e interpretable: varias candidatas no mejoraba
 
 ---
 
-Para el **módulo de clasificación de imágenes** (pólipo vs normal), ver **`ml/readme_imagenes.md`**.
+Para el **módulo de clasificación de imágenes** (pólipo vs normal), ver **`dl/vision_baseline/README.md`**.

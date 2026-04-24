@@ -1,7 +1,7 @@
 """
 Inferencia local con el baseline multiclase Kvasir (ResNet-18) para el simulador Streamlit.
 
-Requiere `mejor_pesos.pt` bajo `ml/vision_baseline_kvasir/runs/resnet18_*/` o la ruta
+Requiere `mejor_pesos.pt` bajo `dl/vision_baseline_kvasir/runs/resnet18_*/` o la ruta
 en la variable de entorno `KVASIR_MODELO_PESOS`.
 """
 
@@ -46,7 +46,7 @@ def resolver_ruta_pesos(raiz: Path) -> Path | None:
         p = Path(env).expanduser().resolve()
         if p.is_file():
             return p
-    runs = raiz / "ml" / "vision_baseline_kvasir" / "runs"
+    runs = raiz / "dl" / "vision_baseline_kvasir" / "runs"
     if not runs.is_dir():
         return None
     cands = sorted(
@@ -61,9 +61,9 @@ def _modelo_cargado(raiz_str: str, ruta_pesos_resuelta: str) -> Any:
     """Carga en memoria un solo modelo; clave de cache: raiz + ruta del checkpoint."""
     asegurar_path_repo(Path(raiz_str))
     import torch
-    from ml.vision_baseline_kvasir.constantes import CLASES_ORDEN
-    from ml.vision_baseline_kvasir.dataset_torch import transformaciones_imagenet_eval
-    from ml.vision_baseline_kvasir.modelo_baseline import crear_resnet18
+    from dl.vision_baseline_kvasir.constantes import CLASES_ORDEN
+    from dl.vision_baseline_kvasir.dataset_torch import transformaciones_imagenet_eval
+    from dl.vision_baseline_kvasir.modelo_baseline import crear_resnet18
 
     ruta = Path(ruta_pesos_resuelta)
     d = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -83,7 +83,7 @@ def predecir_bytes_imagen(raiz: Path, datos: bytes) -> dict[str, Any]:
     ruta = resolver_ruta_pesos(raiz)
     if ruta is None:
         return {
-            "error": "No se encontro `mejor_pesos.pt` en `ml/vision_baseline_kvasir/runs/`. "
+            "error": "No se encontro `mejor_pesos.pt` en `dl/vision_baseline_kvasir/runs/`. "
             "Entrena el modelo o define KVASIR_MODELO_PESOS.",
         }
     try:
@@ -93,7 +93,7 @@ def predecir_bytes_imagen(raiz: Path, datos: bytes) -> dict[str, Any]:
             "error": f"No se pudo cargar el modelo: {exc}",
         }
     asegurar_path_repo(raiz)
-    from ml.vision_baseline_kvasir.constantes import CLASES_ORDEN, indice_a_clase
+    from dl.vision_baseline_kvasir.constantes import CLASES_ORDEN, indice_a_clase
 
     import numpy as np
     import torch
@@ -106,7 +106,7 @@ def predecir_bytes_imagen(raiz: Path, datos: bytes) -> dict[str, Any]:
     im_bruta = Image.open(BytesIO(datos)).convert("RGB")
     pre_info: dict[str, Any]
     if _usar_preprocesado_minimo():
-        from ml.vision_baseline_kvasir.preprocesado_upload import (
+        from dl.vision_baseline_kvasir.preprocesado_upload import (
             aplicar_preprocesado_minimo_entrenamiento,
         )
 
@@ -138,7 +138,7 @@ def predecir_bytes_imagen(raiz: Path, datos: bytes) -> dict[str, Any]:
         "gradcam_superposicion": None,
     }
     try:
-        from ml.vision_baseline_kvasir.gradcam import (
+        from dl.vision_baseline_kvasir.gradcam import (
             grad_cam_resnet18,
             superponer_heatmap_sobre_imagen,
         )

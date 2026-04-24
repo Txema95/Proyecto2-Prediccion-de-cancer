@@ -1,6 +1,6 @@
 # Resumen: preparación de datos para diagnóstico asistido por imagen
 
-Este documento describe los scripts en **`data/scripts/preparation/`**, que construyen el conjunto binario **pólipo (positivo) / mucosa normal (negativo)** y los ficheros tabulares que consume el módulo de visión (`ml/vision_baseline/`).
+Este documento describe los scripts en **`data/scripts/preparation/`**, que construyen el conjunto binario **pólipo (positivo) / mucosa normal (negativo)** y los ficheros tabulares que consume el módulo de visión (`dl/vision_baseline/`).
 
 **Orden recomendado de ejecución**
 
@@ -168,5 +168,5 @@ uv run python data/scripts/preparation/split_dataset.py
 
 ## Enlace con el resto del proyecto
 
-- Tras generar **`splits.csv`**, el entrenamiento de visión puede ejecutarse con `ml/vision_baseline/train.py`, que lee rutas e imágenes según las columnas del split.
+- Tras generar **`splits.csv`**, el entrenamiento de visión puede ejecutarse con `dl/vision_baseline/train.py`, que lee rutas e imágenes según las columnas del split.
 - Para datos tabulares del simulador (cuestionario / variables clínicas), ver **`data/resumen_diagnostico_clinico.md`**.

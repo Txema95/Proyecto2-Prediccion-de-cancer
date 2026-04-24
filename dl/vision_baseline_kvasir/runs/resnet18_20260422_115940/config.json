@@ -1,0 +1,13 @@
+{
+  "splits_csv": "/home/mgalindo/Escritorio/masterIA/Proyecto2-Prediccion-de-cancer/data/processed/kvasir_min_clean/splits_kvasir_multiclase.csv",
+  "raiz": "/home/mgalindo/Escritorio/masterIA/Proyecto2-Prediccion-de-cancer",
+  "salida": "/home/mgalindo/Escritorio/masterIA/Proyecto2-Prediccion-de-cancer/dl/vision_baseline_kvasir/runs/resnet18_20260422_115940",
+  "epocas": 1,
+  "batch": 16,
+  "lr": 0.0001,
+  "weight_decay": 0.0001,
+  "semilla": 42,
+  "workers": 0,
+  "tam_imagen": 224,
+  "dispositivo": "cpu"
+}

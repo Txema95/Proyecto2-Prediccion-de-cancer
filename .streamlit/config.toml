@@ -1,0 +1,13 @@
+# Tema alineado con UIs de salud: azul confianza, fondo frío y tranquilo.
+# Se aplica al ejecutar `streamlit run` con la raíz del repo como cwd.
+
+[theme]
+base = "light"
+primaryColor = "#0D4A6E"
+backgroundColor = "#F0F5F9"
+secondaryBackgroundColor = "#E4EDF2"
+textColor = "#1C2330"
+font = "sans serif"
+
+[client]
+toolbarMode = "auto"

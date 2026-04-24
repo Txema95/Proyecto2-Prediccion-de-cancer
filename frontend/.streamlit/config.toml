@@ -1,0 +1,8 @@
+# Tema (mismo que en la raíz del repositorio), por si se ejecuta Streamlit con cwd en `frontend/`.
+[theme]
+base = "light"
+primaryColor = "#0D4A6E"
+backgroundColor = "#F0F5F9"
+secondaryBackgroundColor = "#E4EDF2"
+textColor = "#1C2330"
+font = "sans serif"
