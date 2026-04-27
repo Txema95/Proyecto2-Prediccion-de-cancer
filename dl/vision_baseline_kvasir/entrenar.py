@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import random
 import sys
 from dataclasses import asdict, dataclass
@@ -84,13 +85,37 @@ def construir_cargador(
     barajar: bool,
 ) -> DataLoader:
     ds = DatasetKvasirMulticlase(splits, particion, raiz, transform=transform)
+    pin_memory = torch.cuda.is_available()
+    kwargs = {
+        "batch_size": batch,
+        "shuffle": barajar,
+        "num_workers": workers,
+        "pin_memory": pin_memory,
+    }
+    if workers > 0:
+        kwargs["persistent_workers"] = True
     return DataLoader(
         ds,
-        batch_size=batch,
-        shuffle=barajar,
-        num_workers=workers,
-        pin_memory=torch.cuda.is_available(),
+        **kwargs,
     )
+
+
+def seleccionar_dispositivo(dispositivo_solicitado: str) -> torch.device:
+    if dispositivo_solicitado == "cpu":
+        return torch.device("cpu")
+    if dispositivo_solicitado == "cuda":
+        if not torch.cuda.is_available():
+            raise RuntimeError("Se solicito CUDA, pero no esta disponible.")
+        return torch.device("cuda")
+    if dispositivo_solicitado == "mps":
+        if not torch.backends.mps.is_available():
+            raise RuntimeError("Se solicito MPS, pero no esta disponible.")
+        return torch.device("mps")
+    if torch.backends.mps.is_available():
+        return torch.device("mps")
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    return torch.device("cpu")
 
 
 def bucle_epoca(
@@ -174,7 +199,12 @@ def main() -> None:
         help="Hilos del DataLoader. 0 suele ser mas estable (sin subprocesos).",
     )
     p.add_argument("--tam-imagen", type=int, default=224, help="Resize de entrada (ImageNet).")
-    p.add_argument("--dispositivo", type=str, default="auto", help="auto | cpu | cuda")
+    p.add_argument("--dispositivo", type=str, default="auto", help="auto | mps | cpu | cuda")
+    p.add_argument(
+        "--sin-mps-fallback",
+        action="store_true",
+        help="Desactiva fallback MPS->CPU para operaciones no soportadas.",
+    )
     p.add_argument(
         "--log-cada-lotes",
         type=int,
@@ -183,18 +213,26 @@ def main() -> None:
     )
     a = p.parse_args()
 
-    if a.dispositivo == "auto":
-        dispositivo = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        dispositivo = torch.device(a.dispositivo)
+    if not a.sin_mps_fallback:
+        os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
+    dispositivo = seleccionar_dispositivo(a.dispositivo)
     fijar_semillas(a.semilla)
+
+    batch_efectivo = int(a.batch)
+    if dispositivo.type == "mps" and batch_efectivo > 16:
+        print(
+            f"[Aviso] Batch {batch_efectivo} puede ser alto para MPS en M2; "
+            "se ajusta a 16 para estabilidad.",
+            flush=True,
+        )
+        batch_efectivo = 16
 
     print("=== Entrenamiento vision_baseline_kvasir (ResNet-18) ===", flush=True)
     print(f"  splits: {a.splits}", flush=True)
     print(f"  dispositivo: {dispositivo}", flush=True)
     es_on = not a.sin_early_stopping
     print(
-        f"  batch={a.batch}  workers={a.workers}  epocas_max={a.epocas}  "
+        f"  batch={batch_efectivo}  workers={a.workers}  epocas_max={a.epocas}  "
         f"early_stopping={es_on}  paciencia={a.paciencia_early}  min_delta_f1={a.min_delta_f1_val}",
         flush=True,
     )
@@ -204,10 +242,10 @@ def main() -> None:
 
     print("Construyendo DataLoaders (lectura de CSV + dataset)...", flush=True)
     car_t = construir_cargador(
-        a.splits, "train", r, tr_t, a.batch, a.workers, True
+        a.splits, "train", r, tr_t, batch_efectivo, a.workers, True
     )
     car_v = construir_cargador(
-        a.splits, "val", r, ev_t, a.batch, a.workers, False
+        a.splits, "val", r, ev_t, batch_efectivo, a.workers, False
     )
     n_train = len(car_t.dataset)
     n_val = len(car_v.dataset)
@@ -234,7 +272,7 @@ def main() -> None:
         salida=run.as_posix(),
         epocas=a.epocas,
         epocas_ejecutadas=None,
-        batch=a.batch,
+        batch=batch_efectivo,
         lr=a.lr,
         weight_decay=a.weight_decay,
         semilla=a.semilla,
@@ -333,7 +371,7 @@ def main() -> None:
     modelo.load_state_dict(d["modelo"])
     print("Evaluando en test con los mejores pesos (val)...", flush=True)
     car_test = construir_cargador(
-        a.splits, "test", r, ev_t, a.batch, a.workers, False
+        a.splits, "test", r, ev_t, batch_efectivo, a.workers, False
     )
     print(f"  test: {len(car_test.dataset)} imagenes, {len(car_test)} lotes", flush=True)
     yt, yp = evaluar_cargador(modelo, car_test, dispositivo)

@@ -2,12 +2,13 @@
 
 ## Objetivo
 
-El archivo `ml/main.py` implementa una aplicación en **Streamlit** para entrenar, evaluar y comparar **cuatro** modelos de clasificación para la detección de cáncer de colon:
+El archivo `ml/main.py` implementa una aplicación en **Streamlit** para entrenar, evaluar y comparar **cinco** modelos de clasificación para la detección de cáncer de colon:
 
 - `regresion_logistica`
 - `random_forest`
 - `xgboost`
 - `svm`
+- `catboost`
 
 Todos comparten el mismo dataset procesado y el mismo conjunto final de variables de entrada, incluidas las features derivadas seleccionadas durante la fase de *feature engineering*.
 
@@ -45,17 +46,18 @@ En la interfaz existe un botón, **Mostrar features generadas**, que muestra est
 
 ## Modelos entrenados
 
-`main.py` entrena estos cuatro clasificadores:
+`main.py` entrena estos cinco clasificadores:
 
 - `LogisticRegression`
 - `RandomForestClassifier`
 - `XGBClassifier`
 - `SVC` (SVM)
+- `CatBoostClassifier`
 
 Cada modelo usa un preprocesado numérico adaptado a su naturaleza:
 
 - Regresión logística y SVM: imputación de medianas y **StandardScaler**.
-- Random forest y XGBoost: imputación de medianas **sin** escalado.
+- Random forest, XGBoost y CatBoost: imputación de medianas **sin** escalado.
 
 ## Particionado de datos
 
@@ -78,6 +80,10 @@ Para cada modelo se calculan:
 
 Estas métricas se guardan en JSON y se usan para construir la tabla comparativa dentro de la app.
 
+El umbral de decisión para convertir probabilidades en clase binaria no está fijado en código: se lee de la variable de entorno `SIMULATOR_DECISION_THRESHOLD` (por defecto `0.5`). Esto mantiene coherencia entre entrenamiento/evaluación y la etiqueta mostrada en el simulador.
+
+En la interfaz, este umbral también se puede ajustar con un `slider` y opcionalmente optimizarse de forma automática en validación para maximizar `recall` con una `precision` mínima configurable.
+
 ## Desbalanceo de clases (enfoque: detectar positivos)
 
 El dataset presenta un desbalanceo moderado (aprox. `3.87 : 1` negativos vs positivos). Dado que el objetivo del simulador es **detectar positivos**, el pipeline aplica estrategias de balanceo para priorizar `recall`:
@@ -85,6 +91,7 @@ El dataset presenta un desbalanceo moderado (aprox. `3.87 : 1` negativos vs posi
 - `LogisticRegression`: `class_weight="balanced"`
 - `RandomForestClassifier`: `class_weight="balanced_subsample"`
 - `XGBClassifier`: `scale_pos_weight` calculado automáticamente a partir de la proporción de clases del conjunto de entrenamiento
+- `CatBoostClassifier`: `scale_pos_weight` calculado automáticamente a partir de la proporción de clases del conjunto de entrenamiento
 - `SVM`: `class_weight="balanced"`, kernel RBF
 
 **Nota técnica sobre SVM:** al igual que la regresión logística, el modelo SVM se beneficia de variables en la misma escala; el pipeline incluye `StandardScaler`. Se configura con `probability=True` para permitir ROC-AUC y PR-AUC.
@@ -119,6 +126,7 @@ En SVM, `class_weight="balanced"` ajusta los pesos de las clases de forma invers
 Para cada algoritmo se guardan artefactos en su carpeta correspondiente:
 
 - `modelo.joblib`
+- `metricas_cv.json`
 - `metricas_validacion.json`
 - `metricas_test.json`
 - `reporte_test.txt`
@@ -134,7 +142,8 @@ Además, se guardan artefactos comunes en `ml/comun/v1`:
 La aplicación muestra:
 
 - Un botón para visualizar las features generadas.
-- Una tabla comparativa con las métricas de test de los cuatro modelos.
+- Una tabla comparativa con las métricas de test de los cinco modelos.
+- Un ranking adicional por robustez usando `cv_pr_auc_mean`.
 - Un mensaje destacando el mejor modelo según `PR-AUC`.
 - Las matrices de confusión de cada algoritmo en test.
 

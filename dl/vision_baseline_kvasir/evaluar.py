@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -29,6 +30,24 @@ from dl.vision_baseline_kvasir.dataset_torch import (
 )
 from dl.vision_baseline_kvasir.modelo_baseline import crear_resnet18, evaluar_cargador
 from dl.vision_baseline_kvasir.paths import raiz_proyecto
+
+
+def seleccionar_dispositivo(dispositivo_solicitado: str) -> torch.device:
+    if dispositivo_solicitado == "cpu":
+        return torch.device("cpu")
+    if dispositivo_solicitado == "cuda":
+        if not torch.cuda.is_available():
+            raise RuntimeError("Se solicito CUDA, pero no esta disponible.")
+        return torch.device("cuda")
+    if dispositivo_solicitado == "mps":
+        if not torch.backends.mps.is_available():
+            raise RuntimeError("Se solicito MPS, pero no esta disponible.")
+        return torch.device("mps")
+    if torch.backends.mps.is_available():
+        return torch.device("mps")
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    return torch.device("cpu")
 
 
 def _ultimo_run(base: Path) -> Path:
@@ -70,12 +89,16 @@ def main() -> None:
         help="Hilos del DataLoader; 0 evita bloqueos al evaluar con pocos lotes o en algunos entornos.",
     )
     p.add_argument("--tam-imagen", type=int, default=224)
-    p.add_argument("--dispositivo", type=str, default="auto")
+    p.add_argument("--dispositivo", type=str, default="auto", help="auto | mps | cpu | cuda")
+    p.add_argument(
+        "--sin-mps-fallback",
+        action="store_true",
+        help="Desactiva fallback MPS->CPU para operaciones no soportadas.",
+    )
     a = p.parse_args()
-    if a.dispositivo == "auto":
-        d = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        d = torch.device(a.dispositivo)
+    if not a.sin_mps_fallback:
+        os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
+    d = seleccionar_dispositivo(a.dispositivo)
 
     if a.ultimo_run and a.run is not None:
         raise SystemExit("No mezclar --run y --ultimo-run.")
@@ -99,6 +122,7 @@ def main() -> None:
         shuffle=False,
         num_workers=a.workers,
         pin_memory=torch.cuda.is_available(),
+        persistent_workers=a.workers > 0,
     )
     yv, yp = evaluar_cargador(modelo, carga, d)
     f1m = f1_score(yv, yp, average="macro", zero_division=0)

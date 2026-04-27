@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import random
 from dataclasses import asdict, dataclass
 from datetime import datetime
@@ -25,6 +26,7 @@ except ModuleNotFoundError:
 @dataclass
 class ConfigEntrenamiento:
     modelo: str
+    dispositivo: str
     ruta_splits: str
     salida_dir: str
     epocas: int
@@ -46,6 +48,18 @@ def parsear_argumentos() -> argparse.Namespace:
     parser.add_argument("--learning-rate", type=float, default=1e-4)
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--workers", type=int, default=0)
+    parser.add_argument(
+        "--device",
+        type=str,
+        default="auto",
+        choices=["auto", "mps", "cpu", "cuda"],
+        help="Dispositivo de entrenamiento. En Mac Apple Silicon se recomienda auto o mps.",
+    )
+    parser.add_argument(
+        "--sin-mps-fallback",
+        action="store_true",
+        help="Desactiva fallback de operaciones no soportadas por MPS a CPU.",
+    )
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument(
         "--metrica-checkpoint",
@@ -67,6 +81,25 @@ def establecer_semilla_global(semilla: int) -> None:
 
 def obtener_raiz_proyecto() -> Path:
     return Path(__file__).resolve().parents[2]
+
+
+def seleccionar_dispositivo(dispositivo_solicitado: str) -> torch.device:
+    if dispositivo_solicitado == "cpu":
+        return torch.device("cpu")
+    if dispositivo_solicitado == "cuda":
+        if not torch.cuda.is_available():
+            raise RuntimeError("Se solicito CUDA, pero no esta disponible en este entorno.")
+        return torch.device("cuda")
+    if dispositivo_solicitado == "mps":
+        if not torch.backends.mps.is_available():
+            raise RuntimeError("Se solicito MPS, pero no esta disponible en este entorno.")
+        return torch.device("mps")
+
+    if torch.backends.mps.is_available():
+        return torch.device("mps")
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    return torch.device("cpu")
 
 
 def construir_transformaciones():
@@ -111,6 +144,7 @@ def construir_dataloaders(
     ruta_splits_csv: Path,
     batch_size: int,
     workers: int,
+    device: torch.device,
 ) -> dict[str, DataLoader]:
     transform_train, transform_eval = construir_transformaciones()
     dataset_train = DatasetColonoscopiaBinario(
@@ -132,10 +166,19 @@ def construir_dataloaders(
         transform=transform_eval,
     )
 
+    usar_pin_memory = device.type == "cuda"
+    loader_kwargs = {
+        "batch_size": batch_size,
+        "num_workers": workers,
+        "pin_memory": usar_pin_memory,
+    }
+    if workers > 0:
+        loader_kwargs["persistent_workers"] = True
+
     loaders = {
-        "train": DataLoader(dataset_train, batch_size=batch_size, shuffle=True, num_workers=workers),
-        "val": DataLoader(dataset_val, batch_size=batch_size, shuffle=False, num_workers=workers),
-        "test": DataLoader(dataset_test, batch_size=batch_size, shuffle=False, num_workers=workers),
+        "train": DataLoader(dataset_train, shuffle=True, **loader_kwargs),
+        "val": DataLoader(dataset_val, shuffle=False, **loader_kwargs),
+        "test": DataLoader(dataset_test, shuffle=False, **loader_kwargs),
     }
     return loaders
 
@@ -162,8 +205,8 @@ def ejecutar_epoca_entrenamiento(
     modelo.train()
     perdidas = []
     for imagenes, etiquetas in loader:
-        imagenes = imagenes.to(device)
-        etiquetas = etiquetas.to(device).unsqueeze(1)
+        imagenes = imagenes.to(device, dtype=torch.float32)
+        etiquetas = etiquetas.to(dtype=torch.float32).to(device).unsqueeze(1)
         optimizador.zero_grad()
         logits = modelo(imagenes)
         perdida = criterio(logits, etiquetas)
@@ -180,8 +223,8 @@ def evaluar_modelo(modelo: nn.Module, loader: DataLoader, criterio: nn.Module, d
     probabilidades = []
     etiquetas_reales = []
     for imagenes, etiquetas in loader:
-        imagenes = imagenes.to(device)
-        etiquetas = etiquetas.to(device).unsqueeze(1)
+        imagenes = imagenes.to(device, dtype=torch.float32)
+        etiquetas = etiquetas.to(dtype=torch.float32).to(device).unsqueeze(1)
         logits = modelo(imagenes)
         perdida = criterio(logits, etiquetas)
         probs = torch.sigmoid(logits).squeeze(1)
@@ -202,7 +245,18 @@ def main() -> None:
     salida_base = (raiz / args.output_dir).resolve() if not args.output_dir.is_absolute() else args.output_dir
 
     establecer_semilla_global(args.seed)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if not args.sin_mps_fallback:
+        os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
+
+    device = seleccionar_dispositivo(args.device)
+
+    batch_size_efectivo = args.batch_size
+    if device.type == "mps" and batch_size_efectivo > 8:
+        print(
+            "[Aviso] En Mac M2 (MPS) un batch grande puede provocar OOM o lentitud. "
+            f"Se ajusta batch_size de {batch_size_efectivo} a 8 para mayor estabilidad."
+        )
+        batch_size_efectivo = 8
 
     sello = datetime.now().strftime("%Y%m%d_%H%M%S")
     salida_run = salida_base / f"{args.modelo}_{sello}"
@@ -210,10 +264,11 @@ def main() -> None:
 
     config = ConfigEntrenamiento(
         modelo=args.modelo,
+        dispositivo=device.type,
         ruta_splits=str(ruta_splits),
         salida_dir=str(salida_run),
         epocas=args.epocas,
-        batch_size=args.batch_size,
+        batch_size=batch_size_efectivo,
         learning_rate=args.learning_rate,
         weight_decay=args.weight_decay,
         semilla=args.seed,
@@ -225,8 +280,9 @@ def main() -> None:
     loaders = construir_dataloaders(
         ruta_proyecto=raiz,
         ruta_splits_csv=ruta_splits,
-        batch_size=args.batch_size,
+        batch_size=batch_size_efectivo,
         workers=args.workers,
+        device=device,
     )
     modelo = crear_modelo_binario(args.modelo, device)
     criterio = nn.BCEWithLogitsLoss()

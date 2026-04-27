@@ -1,0 +1,24 @@
+{
+  "mejor_epoca": 1,
+  "mejor_valor_checkpoint": 1.0,
+  "metrica_checkpoint": "val_recall",
+  "test_loss": 0.0026684345616756573,
+  "metricas_test": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "roc_auc": 1.0,
+    "confusion_matrix": [
+      [
+        92,
+        0
+      ],
+      [
+        0,
+        91
+      ]
+    ]
+  },
+  "ruta_checkpoint": "/Users/ronald/master_iadb/Proyecto_2/Proyecto2-Prediccion-de-cancer/dl/vision_baseline/runs/resnet50_20260427_013444/best_checkpoint.pt"
+}

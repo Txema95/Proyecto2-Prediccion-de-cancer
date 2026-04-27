@@ -6,6 +6,7 @@ PASO_ACTUAL = "paso_actual"
 DATOS_FORMULARIO = "datos_formulario"
 IMAGENES = "imagenes"
 PRED_KVASIR = "pred_kvasir"
+PRED_KVASIR_FIRMA = "pred_kvasir_firma"
 PROB_TABULAR = "prob_tabular"
 RESULTADO_IMAGEN = "resultado_imagen"
 RESULTADO_COMBINADO = "resultado_combinado"
@@ -20,6 +21,8 @@ def inicializar_estado() -> None:
         st.session_state[IMAGENES] = []
     if PRED_KVASIR not in st.session_state:
         st.session_state[PRED_KVASIR] = None
+    if PRED_KVASIR_FIRMA not in st.session_state:
+        st.session_state[PRED_KVASIR_FIRMA] = None
     if PROB_TABULAR not in st.session_state:
         st.session_state[PROB_TABULAR] = None
     if RESULTADO_IMAGEN not in st.session_state:
@@ -32,6 +35,7 @@ def reiniciar_caso() -> None:
     st.session_state[DATOS_FORMULARIO] = {}
     st.session_state[IMAGENES] = []
     st.session_state[PRED_KVASIR] = None
+    st.session_state[PRED_KVASIR_FIRMA] = None
     st.session_state[PROB_TABULAR] = None
     st.session_state[RESULTADO_IMAGEN] = None
     st.session_state[RESULTADO_COMBINADO] = None

@@ -1,21 +1,43 @@
 Evaluacion baseline: regresion_logistica
 
 Registros en test: 1520
+Umbral de decision (automatico): 0.2800 (precision_minima=0.70, cumple_precision=True)
+Cross-validation (folds): 5
+Metricas CV (media):
+{
+  "accuracy": 0.9124374537833763,
+  "precision": 0.7246455074130067,
+  "recall": 0.9287703461852403,
+  "f1": 0.8136867229073552,
+  "roc_auc": 0.9716336856990132,
+  "pr_auc": 0.8986873586595496
+}
+Metricas CV (desviacion_estandar):
+{
+  "accuracy": 0.008734452213595938,
+  "precision": 0.02687671307788517,
+  "recall": 0.011514897316316079,
+  "f1": 0.014401490410879311,
+  "roc_auc": 0.00452910291959475,
+  "pr_auc": 0.026703329532265115
+}
 
 Metricas validacion:
 {
-  "accuracy": 0.9276315789473685,
-  "recall": 0.9198717948717948,
-  "f1": 0.8391812865497076,
-  "roc_auc": 0.9723292367125148,
+  "accuracy": 0.9105263157894737,
+  "precision": 0.7178217821782178,
+  "recall": 0.9294871794871795,
+  "f1": 0.8100558659217877,
+  "roc_auc": 0.9723292367125149,
   "pr_auc": 0.8995470674856059
 }
 
 Metricas test:
 {
-  "accuracy": 0.9190789473684211,
-  "recall": 0.9006410256410257,
-  "f1": 0.8204379562043795,
+  "accuracy": 0.8980263157894737,
+  "precision": 0.689156626506024,
+  "recall": 0.9166666666666666,
+  "f1": 0.7867950481430537,
   "roc_auc": 0.9697701753268807,
   "pr_auc": 0.8754545370188359
 }
@@ -23,9 +45,9 @@ Metricas test:
 Classification report:
               precision    recall  f1-score   support
 
-           0     0.9730    0.9238    0.9478      1208
-           1     0.7534    0.9006    0.8204       312
+           0     0.9765    0.8932    0.9330      1208
+           1     0.6892    0.9167    0.7868       312
 
-    accuracy                         0.9191      1520
-   macro avg     0.8632    0.9122    0.8841      1520
-weighted avg     0.9279    0.9191    0.9216      1520
+    accuracy                         0.8980      1520
+   macro avg     0.8328    0.9049    0.8599      1520
+weighted avg     0.9175    0.8980    0.9030      1520

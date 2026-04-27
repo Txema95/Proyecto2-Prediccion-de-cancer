@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Simulador de apoyo al diagnóstico de cáncer de colon (API + ML + frontend)"
 requires-python = ">=3.11"
 dependencies = [
+    "catboost>=1.2.10",
     "fastapi>=0.115.0",
     "imblearn>=0.0",
     "ipykernel>=7.2.0",

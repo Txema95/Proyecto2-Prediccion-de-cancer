@@ -18,7 +18,20 @@ TAB_IMAGEN = "Diagnóstico con imagen"
 CABECERA_TITULO = "Simulador de apoyo al diagnóstico de cáncer de colon"
 TAB_LABELS: tuple[str, str, str] = (TAB_CONSULTA, TAB_DATOS, TAB_IMAGEN)
 
+
+def _parsear_umbral_decision() -> float:
+    valor_bruto = os.environ.get("SIMULATOR_DECISION_THRESHOLD", "0.5").strip()
+    try:
+        valor = float(valor_bruto)
+    except ValueError as exc:
+        raise ValueError("SIMULATOR_DECISION_THRESHOLD debe ser numerico") from exc
+    if not 0.0 <= valor <= 1.0:
+        raise ValueError("SIMULATOR_DECISION_THRESHOLD debe estar entre 0.0 y 1.0")
+    return valor
+
+
 API_BASE_URL = os.environ.get("SIMULATOR_API_BASE_URL", "http://127.0.0.1:8000").rstrip("/")
+DECISION_THRESHOLD = _parsear_umbral_decision()
 
 NOMBRES_VISUALES_VARIABLES = {
     "age": "Edad (años)",

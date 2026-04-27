@@ -1,0 +1,12 @@
+{
+  "modelo": "resnet50",
+  "ruta_splits": "/Users/ronald/master_iadb/Proyecto_2/Proyecto2-Prediccion-de-cancer/data/processed/splits.csv",
+  "salida_dir": "/Users/ronald/master_iadb/Proyecto_2/Proyecto2-Prediccion-de-cancer/dl/vision_baseline/runs/resnet50_20260427_013240",
+  "epocas": 10,
+  "batch_size": 16,
+  "learning_rate": 0.0001,
+  "weight_decay": 0.0001,
+  "semilla": 42,
+  "workers": 0,
+  "metrica_checkpoint": "val_recall"
+}
