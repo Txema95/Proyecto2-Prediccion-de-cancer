@@ -158,22 +158,19 @@ def predecir_bytes_imagen(raiz: Path, datos: bytes) -> dict[str, Any]:
         "gradcam_error": None,
         "gradcam_superposicion": None,
     }
-    if os.environ.get("KVASIR_GRADCAM", "").strip().lower() in ("1", "true", "yes", "si"):
-        try:
-            from dl.vision_baseline_kvasir.gradcam import (
-                grad_cam_resnet18,
-                superponer_heatmap_sobre_imagen,
-            )
+    try:
+        from dl.vision_baseline_kvasir.gradcam import (
+            grad_cam_resnet18,
+            superponer_heatmap_sobre_imagen,
+        )
 
-            t_in = transform(im).unsqueeze(0).to(d)
-            hw = int(t_in.shape[2])
-            mapa = grad_cam_resnet18(modelo, t_in, k)
-            sup = superponer_heatmap_sobre_imagen(im, mapa, tam=(hw, hw))
-            salida["gradcam_superposicion"] = sup
-        except Exception as exc:  # noqa: BLE001
-            salida["gradcam_error"] = str(exc)
-    else:
-        salida["gradcam_error"] = "Desactivado por defecto. Define KVASIR_GRADCAM=1 para habilitarlo."
+        t_in = transform(im).unsqueeze(0).to(d)
+        hw = int(t_in.shape[2])
+        mapa = grad_cam_resnet18(modelo, t_in, k)
+        sup = superponer_heatmap_sobre_imagen(im, mapa, tam=(hw, hw))
+        salida["gradcam_superposicion"] = sup
+    except Exception as exc:  # noqa: BLE001
+        salida["gradcam_error"] = str(exc)
     return salida
 
 

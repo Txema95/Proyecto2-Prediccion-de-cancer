@@ -41,6 +41,16 @@ def etiqueta_desde_probabilidad(probabilidad: float, umbral: float = DECISION_TH
     return "Riesgo alto (positivo)" if probabilidad >= umbral else "Riesgo bajo (negativo)"
 
 
+def tipo_riesgo_terciles(probabilidad: float) -> str:
+    """Tres franjas 0-33, 33-66, 66-100% sobre la probabilidad o confianza mostrada."""
+    p = max(0.0, min(1.0, float(probabilidad)))
+    if p < 1.0 / 3.0:
+        return "Bajo (tercil inferior de la puntuación)"
+    if p < 2.0 / 3.0:
+        return "Moderado (tercil intermedio)"
+    return "Alto (tercil superior de la puntuación)"
+
+
 def ejecutar_prediccion(datos_formulario: dict[str, float], imagenes: list) -> None:
     respuesta = ejecutar_prediccion_http(datos_formulario, len(imagenes))
     st.session_state[state.PROB_TABULAR] = float(respuesta["probabilidad_tabular"])

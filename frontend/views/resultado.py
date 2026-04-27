@@ -1,10 +1,13 @@
 """Paso 4: resultado de inferencia tabular, imagen y combinado."""
 
-import pandas as pd
 import streamlit as st
 
 import state
-from servicio_modelo import ejecutar_prediccion, etiqueta_desde_probabilidad, normalizar_valor
+from servicio_modelo import (
+    ejecutar_prediccion,
+    etiqueta_desde_probabilidad,
+    tipo_riesgo_terciles,
+)
 
 
 def render() -> None:
@@ -28,67 +31,76 @@ def render() -> None:
     st.subheader("4) Resultado")
     prob_tabular = float(st.session_state[state.PROB_TABULAR])
     resultado_imagen = st.session_state[state.RESULTADO_IMAGEN]
-    prob_combinada = float(st.session_state[state.RESULTADO_COMBINADO])
 
-    col_a, col_b, col_c = st.columns(3)
-    with col_a:
-        st.metric("Probabilidad tabular", f"{prob_tabular:.2%}", border=True)
-        st.write(etiqueta_desde_probabilidad(prob_tabular))
-    with col_b:
-        pred_k = st.session_state.get(state.PRED_KVASIR)
-        if pred_k and isinstance(pred_k, list) and any(
-            p and not p.get("error") for p in pred_k
-        ):
-            st.markdown("**Vision (Kvasir, local)**")
-            for p in pred_k:
-                if not p:
-                    continue
-                if p.get("error"):
-                    st.warning(f"{p.get('archivo', 'archivo')}: {p['error']}")
-                else:
-                    st.write(
-                        f"**{p.get('archivo', '?')}** → {p.get('clase_presentacion', '')} "
-                        f"({p.get('confianza', 0):.0%})"
-                    )
-                    if p.get("gradcam_superposicion") is not None:
-                        st.image(
-                            p["gradcam_superposicion"],
-                            caption="Grad-CAM (clase predicha)",
-                            use_container_width=True,
-                        )
-                    elif p.get("gradcam_error"):
-                        st.caption(f"Grad-CAM: {p['gradcam_error'][:120]}")
-        elif pred_k and all(p and p.get("error") for p in pred_k):
-            st.warning("Comprobacion Kvasir no disponible; define `KVASIR_MODELO_PESOS` o entrena un run.")
-        elif not pred_k:
-            st.info("Carga imagenes en el paso 2 para la comprobacion Kvasir (modelo local).")
+    pred_k = st.session_state.get(state.PRED_KVASIR)
+    pred_k_validas: list = []
+    if pred_k and isinstance(pred_k, list):
+        for p in pred_k:
+            if p and not p.get("error"):
+                pred_k_validas.append(p)
+    prob_max_conf: float | None
+    if pred_k_validas:
+        prob_max_conf = max(float(p.get("confianza", 0) or 0) for p in pred_k_validas)
+    else:
+        prob_max_conf = None
+
+    col_tab, col_img = st.columns(2, width="stretch")
+    with col_tab:
+        st.markdown("**Resumen — datos tabulares (API)**")
+        st.metric("Probabilidad estimada (cáncer)", f"{prob_tabular:.1%}", border=True)
+        st.write("**Tipo de riesgo (terciles):**", tipo_riesgo_terciles(prob_tabular))
+        st.caption(etiqueta_desde_probabilidad(prob_tabular))
+    with col_img:
+        st.markdown("**Resumen — imágenes (Kvasir, local)**")
+        if pred_k_validas and prob_max_conf is not None:
+            st.metric("Máx. confianza (clase predicha)", f"{prob_max_conf:.1%}", border=True)
+            st.write("**Tipo de riesgo (terciles, sobre la confianza):**", tipo_riesgo_terciles(prob_max_conf))
+            for p in pred_k_validas:
+                nom = p.get("archivo", "?")
+                tipo = p.get("clase_presentacion", p.get("clase_tecnica", "")) or "—"
+                conf = float(p.get("confianza", 0) or 0)
+                riesgo_i = tipo_riesgo_terciles(conf)
+                st.markdown(
+                    f"- **Archivo:** `{nom}`  \n"
+                    f"  **Clase (modelo):** {tipo}  \n"
+                    f"  **Confianza:** {conf:.1%}  \n"
+                    f"  **Tipo de riesgo:** {riesgo_i}"
+                )
+        elif pred_k and isinstance(pred_k, list) and all(p and p.get("error") for p in pred_k):
+            st.warning("Comprobación Kvasir no disponible; define `KVASIR_MODELO_PESOS` o entrena un run.")
+        else:
+            st.info("Carga imágenes en el paso 2 para el análisis Kvasir (modelo local).")
         msg_api = resultado_imagen.get("mensaje") or ""
         if msg_api:
-            st.caption(f"Nota API (riesgo combinado en servidor): {msg_api}")
-    with col_c:
-        st.metric("Probabilidad combinada", f"{prob_combinada:.2%}", border=True)
-        st.write(etiqueta_desde_probabilidad(prob_combinada))
+            st.caption(f"Nota API: {msg_api}")
+        if resultado_imagen.get("probabilidad") is not None:
+            st.caption(f"Prob. imagen (API, si aplica): {float(resultado_imagen['probabilidad']):.1%}")
 
-    datos = st.session_state[state.DATOS_FORMULARIO]
-    if datos:
-        edad = float(datos.get("age", 0.0))
-        sof = float(datos.get("sof", 0.0))
-        tenesmus = float(datos.get("tenesmus", 0.0))
-        rectorrhagia = float(datos.get("rectorrhagia", 0.0))
-        sintomas = sof + tenesmus + rectorrhagia
-        riesgo_familiar = float(datos.get("digestive_family_risk_level", 0.0))
-        explicacion = pd.DataFrame(
-            {
-                "factor": ["edad", "n_sintomas", "riesgo_familiar"],
-                "valor_normalizado": [
-                    normalizar_valor(edad, 18, 95),
-                    normalizar_valor(sintomas, 0, 3),
-                    normalizar_valor(riesgo_familiar, 0, 3),
-                ],
-            }
-        )
-        st.write("Indicadores clinicos resumidos del caso:")
-        st.bar_chart(explicacion.set_index("factor"), width="stretch")
+    st.subheader("Vista detallada — visión (Kvasir, local)")
+    if pred_k and isinstance(pred_k, list) and any(
+        p and not p.get("error") for p in pred_k
+    ):
+        st.markdown("**Vision (Kvasir, local)**")
+        for p in pred_k:
+            if not p:
+                continue
+            if p.get("error"):
+                st.warning(f"{p.get('archivo', 'archivo')}: {p['error']}")
+            else:
+                st.write(
+                    f"**{p.get('archivo', '?')}** → {p.get('clase_presentacion', '')} "
+                    f"({p.get('confianza', 0):.0%})"
+                )
+                if p.get("gradcam_superposicion") is not None:
+                    st.image(
+                        p["gradcam_superposicion"],
+                        caption="Grad-CAM (clase predicha)",
+                        use_container_width=True,
+                    )
+                elif p.get("gradcam_error"):
+                    st.caption(f"Grad-CAM: {p['gradcam_error'][:120]}")
+    else:
+        st.caption("Sin análisis Kvasir en detalle o análisis no disponible.")
 
     col_izq, col_der = st.columns([1, 1])
     with col_izq:
