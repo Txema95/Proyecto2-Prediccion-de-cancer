@@ -41,6 +41,24 @@ def etiqueta_desde_probabilidad(probabilidad: float, umbral: float = DECISION_TH
     return "Riesgo alto (positivo)" if probabilidad >= umbral else "Riesgo bajo (negativo)"
 
 
+def _firma_imagenes_cargadas(imagenes: list) -> tuple[tuple[str, int], ...]:
+    return tuple((str(f.name), int(f.size)) for f in imagenes)
+
+
+def _predicciones_kvasir_sobre_imagenes(raiz: Path, imagenes: list) -> list[dict]:
+    from servicio_vision_kvasir import predecir_fichero_uploader
+
+    predicciones: list[dict] = []
+    for f in imagenes:
+        try:
+            predicciones.append(predecir_fichero_uploader(raiz, f))
+        except Exception as exc:  # noqa: BLE001
+            predicciones.append(
+                {"archivo": getattr(f, "name", "imagen"), "error": str(exc)}
+            )
+    return predicciones
+
+
 def tipo_riesgo_terciles(probabilidad: float) -> str:
     """Tres franjas 0-33, 33-66, 66-100% sobre la probabilidad o confianza mostrada."""
     p = max(0.0, min(1.0, float(probabilidad)))
@@ -52,6 +70,10 @@ def tipo_riesgo_terciles(probabilidad: float) -> str:
 
 
 def ejecutar_prediccion(datos_formulario: dict[str, float], imagenes: list) -> None:
+    """
+    Llama al API (`/ejecutar-prediccion` tabular) y, si hay imagenes, ejecuta en local
+    el baseline Kvasir (misma accion, tras la respuesta HTTP; no se envian bytes al backend).
+    """
     respuesta = ejecutar_prediccion_http(datos_formulario, len(imagenes))
     st.session_state[state.PROB_TABULAR] = float(respuesta["probabilidad_tabular"])
     st.session_state[state.RESULTADO_COMBINADO] = float(respuesta["probabilidad_combinada"])
@@ -61,4 +83,11 @@ def ejecutar_prediccion(datos_formulario: dict[str, float], imagenes: list) -> N
         "mensaje": ri["mensaje"],
         "probabilidad": ri.get("probabilidad"),
     }
+    if imagenes:
+        raiz = buscar_raiz_proyecto()
+        st.session_state[state.PRED_KVASIR] = _predicciones_kvasir_sobre_imagenes(raiz, imagenes)
+        st.session_state[state.PRED_KVASIR_FIRMA] = _firma_imagenes_cargadas(imagenes)
+    else:
+        st.session_state[state.PRED_KVASIR] = None
+        st.session_state[state.PRED_KVASIR_FIRMA] = None
     st.session_state[state.PASO_ACTUAL] = 3

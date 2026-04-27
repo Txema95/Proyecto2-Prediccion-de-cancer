@@ -1,103 +1,23 @@
-"""Paso 2: carga de imagenes adjuntas al caso y comprobacion con el modelo Kvasir (multiclase)."""
+"""Paso 2: carga de imagenes adjuntas al caso (inferencia Kvasir al generar el resultado)."""
 
-import pandas as pd
 import streamlit as st
 
 from config import MAX_MB_POR_IMAGEN
 import state
-from servicio_modelo import buscar_raiz_proyecto
-from servicio_vision_kvasir import NOMBRES_CLASE_KVASIR, predecir_fichero_uploader
 
 
 def _firma_imagenes(ficheros: list) -> tuple[tuple[str, int], ...]:
     return tuple((str(f.name), int(f.size)) for f in ficheros)
 
 
-def _mostrar_prediccion_kvasir(p: dict) -> None:
-    nombre = p.get("archivo", "imagen")
-    if p.get("error"):
-        st.error(f"**{nombre}:** {p['error']}")
-        return
-    st.markdown(f"**{nombre}**")
-    pp = p.get("preprocesado") or {}
-    vp = p.get("vista_previa_preprocesado")
-    if pp.get("aplicado"):
-        st.markdown("##### Preprocesado (alineado con el entrenamiento)")
-        st.caption(
-            "Mismo flujo que `kvasir_preprocesado_minimo.py`: bordes negros, recorte cuadrado, "
-            "salida 512×512; el modelo aplica despues 224×224 + normalizacion ImageNet."
-        )
-        col_pp1, col_pp2 = st.columns(2)
-        with col_pp1:
-            if vp is not None:
-                st.image(
-                    vp,
-                    caption="Imagen enviada al modelo (tras preprocesado; ver tamano en JSON)",
-                    width="stretch",
-                )
-        with col_pp2:
-            st.json(
-                {
-                    "size_preprocesado_px": pp.get("size_salida"),
-                    "umbral_negro": pp.get("umbral_negro"),
-                    "padding_fraccion": pp.get("padding_fraccion"),
-                    "recorte_borde_negro": pp.get("recorte_borde_negro"),
-                    "pixeles_recortados_borde": pp.get("pixeles_recortados_borde"),
-                    "original_wh": f"{pp.get('ancho_original')}x{pp.get('alto_original')}",
-                    "tras_recorte_borde_wh": f"{pp.get('ancho_tras_borde')}x{pp.get('alto_tras_borde')}",
-                }
-            )
-    else:
-        st.info(
-            pp.get("motivo", "Preprocesado minimo no aplicado.")
-            + " Puedes activarlo quitando `KVASIR_SIN_PREPROCESADO` del entorno."
-        )
-    st.success(
-        f"Clase predicha: **{p['clase_presentacion']}** "
-        f"— confianza: {p['confianza']:.1%}"
-    )
-    if p.get("ruta_pesos"):
-        st.caption(f"Checkpoint: `{p['ruta_pesos']}`")
-    filas = [
-        {
-            "Categoria (Kvasir)": NOMBRES_CLASE_KVASIR.get(k, k),
-            "Probabilidad": v,
-        }
-        for k, v in p.get("probabilidades", {}).items()
-    ]
-    if filas:
-        df = pd.DataFrame(filas).sort_values("Probabilidad", ascending=False)
-        df["Prob."] = df["Probabilidad"].map(lambda x: f"{x:.1%}")
-        st.dataframe(
-            df[["Categoria (Kvasir)", "Prob."]],
-            width="stretch",
-            hide_index=True,
-        )
-    gc = p.get("gradcam_superposicion")
-    ge = p.get("gradcam_error")
-    if ge:
-        st.warning(f"Grad-CAM no disponible: {ge}")
-    elif gc is not None:
-        st.markdown("**Grad-CAM** (zonas que mas influyen en la clase predicha arriba)")
-        st.caption(
-            "Colormap *jet*: rojo = mayor peso en la decision para esa clase. "
-            "Imagen internamente a 224 px como en el entrenamiento."
-        )
-        st.image(gc, caption="Superposicion Grad-CAM + imagen", width="stretch")
-
-
 def render() -> None:
     st.subheader("2) Carga de imagenes")
     st.write(
-        "Adjunta una o varias imagenes (PNG/JPG/JPEG). Cada imagen pasa por el **preprocesado minimo** "
-        "(`kvasir_preprocesado_minimo`: recorte de viñeta, cuadrado, 512 px) y despues el modelo **ResNet-18** "
-        "Kvasir (4 clases). Solo orientacion; no es diagnostico medico."
+        "Adjunta una o varias imagenes (PNG/JPG/JPEG). La comprobacion con el modelo **Kvasir** "
+        "(ResNet-18, multiclase) se ejecuta al **obtener el resultado** (mismo flujo que la prediccion tabular vía API). "
+        "Ahi veras clases, confianza, Grad-CAM y el resumen clínico. "
+        "Solo orientacion; no es diagnostico medico."
     )
-    try:
-        raiz = buscar_raiz_proyecto()
-    except FileNotFoundError as err:
-        st.error(str(err))
-        return
 
     ficheros = st.file_uploader(
         "Selecciona imagenes",
@@ -125,30 +45,13 @@ def render() -> None:
             for i, fichero in enumerate(imagenes_validas):
                 with columnas[i % len(columnas)]:
                     st.image(fichero, caption=fichero.name, width="stretch")
-
-            if st.session_state.get(state.PRED_KVASIR_FIRMA) != firma_actual:
-                st.info("Imagenes nuevas detectadas. Pulsa **Comprobar con modelo Kvasir** para ejecutar inferencia.")
+            firma_prev = st.session_state.get(state.PRED_KVASIR_FIRMA)
+            if firma_prev != firma_actual:
                 st.session_state[state.PRED_KVASIR] = None
-
-            if st.button("Comprobar con modelo Kvasir", width="stretch"):
-                with st.spinner("Comprobando imagenes con el modelo de vision (Kvasir)..."):
-                    predicciones = []
-                    for f in imagenes_validas:
-                        try:
-                            predicciones.append(predecir_fichero_uploader(raiz, f))
-                        except Exception as exc:  # noqa: BLE001
-                            predicciones.append({"archivo": getattr(f, "name", "imagen"), "error": str(exc)})
-                st.session_state[state.PRED_KVASIR] = predicciones
-                st.session_state[state.PRED_KVASIR_FIRMA] = firma_actual
-
-            predicciones = st.session_state.get(state.PRED_KVASIR)
-
-            if predicciones:
-                st.divider()
-                st.markdown("**Comprobacion con el modelo (baseline Kvasir, ResNet-18)**")
-                for pred in predicciones:
-                    with st.container(border=True):
-                        _mostrar_prediccion_kvasir(pred)
+                if firma_prev is not None:
+                    st.info(
+                        "Has cambiado las imagenes. Al **generar el resultado** se volverá a inferir con Kvasir."
+                    )
         else:
             st.session_state[state.PRED_KVASIR] = None
             st.session_state[state.PRED_KVASIR_FIRMA] = None
