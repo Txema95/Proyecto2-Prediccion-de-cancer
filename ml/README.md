@@ -2,14 +2,15 @@
 
 ## Objetivo
 
-El archivo `ml/main.py` implementa una aplicacion en `Streamlit` para entrenar, evaluar y comparar tres modelos de clasificacion para la deteccion de cancer de colon:
+El archivo `ml/main.py` implementa una aplicacion en `Streamlit` para entrenar, evaluar y comparar cinco modelos de clasificacion para la deteccion de cancer de colon:
 
 - `regresion_logistica`
 - `random_forest`
 - `xgboost`
 - `svm`
+- `catboost`
 
-Los tres modelos trabajan sobre el mismo dataset procesado y utilizan el mismo conjunto final de variables de entrada, incluyendo las features derivadas seleccionadas durante la fase de `feature engineering`.
+Todos los modelos trabajan sobre el mismo dataset procesado y utilizan el mismo conjunto final de variables de entrada, incluyendo las features derivadas seleccionadas durante la fase de `feature engineering`.
 
 ## Ejecucion
 
@@ -39,7 +40,7 @@ La aplicacion sigue este flujo:
   - entrenamiento
   - validacion
   - test
-6. Entrena los tres algoritmos con su pipeline correspondiente.
+6. Entrena los cinco algoritmos con su pipeline correspondiente.
 7. Calcula metricas de validacion y test.
 8. Guarda artefactos y muestra resultados en la interfaz.
 
@@ -54,17 +55,18 @@ En la interfaz existe un boton, `Mostrar features generadas`, que enseña estas 
 
 ## Modelos entrenados
 
-`main.py` entrena estos tres clasificadores:
+`main.py` entrena estos cinco clasificadores:
 
 - `LogisticRegression`
 - `RandomForestClassifier`
 - `XGBClassifier`
 - `SVM`
+- `CatBoostClassifier`
 
 Cada modelo usa un preprocesado numerico adaptado a su naturaleza:
 
-- La regresion logistica aplica imputacion de medianas y escalado.
-- Random forest y XGBoost aplican imputacion de medianas sin escalado.
+- La regresion logistica y SVM aplican imputacion de medianas y escalado (`StandardScaler`).
+- Random forest, XGBoost y CatBoost aplican imputacion de medianas sin escalado.
 
 ## Particionado de datos
 
@@ -85,12 +87,15 @@ Esto permite:
 Para cada modelo se calculan:
 
 - `accuracy`
+- `precision`
 - `recall`
 - `f1`
 - `roc_auc`
 - `pr_auc`
 
 Estas metricas se guardan en JSON y se usan para construir la tabla comparativa dentro de la app.
+
+Ademas, para cada baseline se guarda `metricas_cv.json` con media y desviacion estandar de validacion cruzada estratificada.
 
 ## Desbalanceo de clases (enfoque: detectar positivos)
 
@@ -99,6 +104,7 @@ El dataset presenta un desbalanceo moderado (aprox. `3.87 : 1` negativos vs posi
 - `LogisticRegression`: `class_weight="balanced"`
 - `RandomForestClassifier`: `class_weight="balanced_subsample"`
 - `XGBClassifier`: `scale_pos_weight` calculado automaticamente a partir de la proporcion de clases del conjunto de entrenamiento
+- `CatBoostClassifier`: `scale_pos_weight` calculado automaticamente a partir de la proporcion de clases del conjunto de entrenamiento
 - `SVM`: `class_weight="balanced"`, Kernel `RBF`
 
 **Nota técnica sobre SVM:** 
@@ -139,6 +145,7 @@ Para cada algoritmo se guardan artefactos en su carpeta correspondiente:
 - `modelo.joblib`
 - `metricas_validacion.json`
 - `metricas_test.json`
+- `metricas_cv.json`
 - `reporte_test.txt`
 - `matriz_confusion_test.png`
 
@@ -152,7 +159,8 @@ Ademas, se guardan artefactos comunes en `ml/comun/v1`:
 La aplicacion enseña:
 
 - Un boton para visualizar las features generadas.
-- Una tabla comparativa con las metricas de test de los tres modelos.
+- Una tabla comparativa con las metricas de test de los cinco modelos.
+- Un ranking adicional por robustez usando `cv_pr_auc_mean`.
 - Un mensaje destacando el mejor modelo segun `PR-AUC`.
 - Las matrices de confusion de cada algoritmo en test.
 
@@ -166,7 +174,7 @@ Las funciones principales de `main.py` son:
 - `crear_modelo()`: monta el pipeline segun el algoritmo.
 - `hacer_particiones()`: divide el dataset en entrenamiento, validacion y test.
 - `entrenar_y_evaluar_modelo()`: entrena, calcula metricas y guarda artefactos.
-- `construir_tabla_comparacion()`: resume resultados de los tres modelos.
+- `construir_tabla_comparacion()`: resume resultados de los cinco modelos.
 - `main()`: construye la interfaz de `Streamlit`.
 
 ## Nota sobre `ml/feature_engineering.py`
@@ -198,7 +206,7 @@ Durante las pruebas, el comportamiento mas consistente y util aparecio en `xgboo
 - `n_sintomas`
 - `riesgo_familiar_x_edad`
 
-Se eligieron porque aportaban senal clinicamente interpretable y mejoraban el rendimiento sin complicar en exceso el espacio de variables. A partir de esa conclusion, se decidio reutilizar este mismo conjunto final en los tres algoritmos para mantener un pipeline comun y una comparacion justa entre modelos.
+Se eligieron porque aportaban senal clinicamente interpretable y mejoraban el rendimiento sin complicar en exceso el espacio de variables. A partir de esa conclusion, se decidio reutilizar este mismo conjunto final en todos los algoritmos para mantener un pipeline comun y una comparacion justa entre modelos.
 
 ### Por que no se anadieron mas features
 

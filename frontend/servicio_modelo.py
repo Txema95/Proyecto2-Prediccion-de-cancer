@@ -8,6 +8,7 @@ import pandas as pd
 import streamlit as st
 
 import state
+from config import DECISION_THRESHOLD
 from servicio_api import ejecutar_prediccion_http
 
 
@@ -36,8 +37,8 @@ def normalizar_valor(valor: float, minimo: float, maximo: float) -> float:
     return (valor - minimo) / (maximo - minimo)
 
 
-def etiqueta_desde_probabilidad(probabilidad: float) -> str:
-    return "Riesgo alto (positivo)" if probabilidad >= 0.5 else "Riesgo bajo (negativo)"
+def etiqueta_desde_probabilidad(probabilidad: float, umbral: float = DECISION_THRESHOLD) -> str:
+    return "Riesgo alto (positivo)" if probabilidad >= umbral else "Riesgo bajo (negativo)"
 
 
 def ejecutar_prediccion(datos_formulario: dict[str, float], imagenes: list) -> None:

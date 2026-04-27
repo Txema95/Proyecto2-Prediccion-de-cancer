@@ -68,7 +68,28 @@ def _modelo_cargado(raiz_str: str, ruta_pesos_resuelta: str) -> Any:
     ruta = Path(ruta_pesos_resuelta)
     d = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     payload = torch.load(ruta, map_location=d, weights_only=False)
+    if not isinstance(payload, dict):
+        raise ValueError(
+            "Checkpoint invalido para Kvasir: se esperaba un diccionario con claves del pipeline "
+            "multiclase (`modelo`, `n_clases`)."
+        )
+    if "modelo" not in payload:
+        raise ValueError(
+            "Checkpoint incompatible: falta la clave `modelo`. "
+            "Parece no ser un run de `dl/vision_baseline_kvasir`."
+        )
+    if "model_state_dict" in payload:
+        raise ValueError(
+            "Checkpoint incompatible detectado: parece provenir de `dl/vision_baseline` (binario). "
+            "Para el simulador Kvasir usa `dl/vision_baseline_kvasir/runs/resnet18_*/mejor_pesos.pt`."
+        )
+
     n_c = int(payload.get("n_clases", len(CLASES_ORDEN)))
+    if n_c != len(CLASES_ORDEN):
+        raise ValueError(
+            f"Numero de clases incompatible para Kvasir: n_clases={n_c}, esperado={len(CLASES_ORDEN)}."
+        )
+
     modelo = crear_resnet18(n_c).to(d)
     modelo.load_state_dict(payload["modelo"])
     modelo.eval()
@@ -137,19 +158,22 @@ def predecir_bytes_imagen(raiz: Path, datos: bytes) -> dict[str, Any]:
         "gradcam_error": None,
         "gradcam_superposicion": None,
     }
-    try:
-        from dl.vision_baseline_kvasir.gradcam import (
-            grad_cam_resnet18,
-            superponer_heatmap_sobre_imagen,
-        )
+    if os.environ.get("KVASIR_GRADCAM", "").strip().lower() in ("1", "true", "yes", "si"):
+        try:
+            from dl.vision_baseline_kvasir.gradcam import (
+                grad_cam_resnet18,
+                superponer_heatmap_sobre_imagen,
+            )
 
-        t_in = transform(im).unsqueeze(0).to(d)
-        hw = int(t_in.shape[2])
-        mapa = grad_cam_resnet18(modelo, t_in, k)
-        sup = superponer_heatmap_sobre_imagen(im, mapa, tam=(hw, hw))
-        salida["gradcam_superposicion"] = sup
-    except Exception as exc:  # noqa: BLE001
-        salida["gradcam_error"] = str(exc)
+            t_in = transform(im).unsqueeze(0).to(d)
+            hw = int(t_in.shape[2])
+            mapa = grad_cam_resnet18(modelo, t_in, k)
+            sup = superponer_heatmap_sobre_imagen(im, mapa, tam=(hw, hw))
+            salida["gradcam_superposicion"] = sup
+        except Exception as exc:  # noqa: BLE001
+            salida["gradcam_error"] = str(exc)
+    else:
+        salida["gradcam_error"] = "Desactivado por defecto. Define KVASIR_GRADCAM=1 para habilitarlo."
     return salida
 
 

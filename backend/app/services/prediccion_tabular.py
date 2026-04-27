@@ -30,7 +30,7 @@ def _rutas_ml() -> dict[str, Path]:
     raiz = raiz_proyecto()
     return {
         "csv": raiz / "data" / "processed" / "cancer_final_clean_v2.csv",
-        "modelo_tabular": raiz / "ml" / "xgboost" / "v1" / "artefactos" / "modelo.joblib",
+        "modelo_tabular": raiz / "ml" / "catboost" / "v1" / "artefactos" / "modelo.joblib",
         "modelo_imagen": raiz / "ml" / "imagen" / "v1" / "artefactos" / "modelo.joblib",
     }
 

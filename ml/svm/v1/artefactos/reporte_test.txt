@@ -1,31 +1,53 @@
 Evaluacion baseline: svm
 
 Registros en test: 1520
+Umbral de decision (automatico): 0.0300 (precision_minima=0.70, cumple_precision=True)
+Cross-validation (folds): 5
+Metricas CV (media):
+{
+  "accuracy": 0.9103471310809617,
+  "precision": 0.7172603876618548,
+  "recall": 0.932158576207167,
+  "f1": 0.8104786963420434,
+  "roc_auc": 0.9577281586050226,
+  "pr_auc": 0.8811452118947296
+}
+Metricas CV (desviacion_estandar):
+{
+  "accuracy": 0.006917421837058316,
+  "precision": 0.020027951657828353,
+  "recall": 0.011758987824146907,
+  "f1": 0.011967589596085258,
+  "roc_auc": 0.008433659804347569,
+  "pr_auc": 0.024355908981210723
+}
 
 Metricas validacion:
 {
-  "accuracy": 0.9375,
-  "recall": 0.907051282051282,
-  "f1": 0.8562783661119516,
-  "roc_auc": 0.9585588597384955,
-  "pr_auc": 0.8835738495346284
+  "accuracy": 0.9144736842105263,
+  "precision": 0.7275,
+  "recall": 0.9326923076923077,
+  "f1": 0.8174157303370787,
+  "roc_auc": 0.9586039650195279,
+  "pr_auc": 0.8837370386719513
 }
 
 Metricas test:
 {
-  "accuracy": 0.9269736842105263,
-  "recall": 0.8910256410256411,
-  "f1": 0.8335832083958021,
-  "roc_auc": 0.94769379351333,
-  "pr_auc": 0.8427938043962612
+  "accuracy": 0.9013157894736842,
+  "precision": 0.6985294117647058,
+  "recall": 0.9134615384615384,
+  "f1": 0.7916666666666666,
+  "roc_auc": 0.9478105365936492,
+  "pr_auc": 0.8432101929934879
 }
 
 Classification report:
               precision    recall  f1-score   support
 
-           0     0.9708    0.9363    0.9532      1208
-           1     0.7831    0.8910    0.8336       312
+           0     0.9757    0.8982    0.9353      1208
+           1     0.6985    0.9135    0.7917       312
 
-    accuracy                         0.9270      1520
-   macro avg     0.8770    0.9136    0.8934      1520
-weighted avg     0.9323    0.9270    0.9287      1520
+    accuracy                         0.9013      1520
+   macro avg     0.8371    0.9058    0.8635      1520
+weighted avg     0.9188    0.9013    0.9059      1520

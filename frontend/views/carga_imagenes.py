@@ -9,6 +9,10 @@ from servicio_modelo import buscar_raiz_proyecto
 from servicio_vision_kvasir import NOMBRES_CLASE_KVASIR, predecir_fichero_uploader
 
 
+def _firma_imagenes(ficheros: list) -> tuple[tuple[str, int], ...]:
+    return tuple((str(f.name), int(f.size)) for f in ficheros)
+
+
 def _mostrar_prediccion_kvasir(p: dict) -> None:
     nombre = p.get("archivo", "imagen")
     if p.get("error"):
@@ -29,7 +33,7 @@ def _mostrar_prediccion_kvasir(p: dict) -> None:
                 st.image(
                     vp,
                     caption="Imagen enviada al modelo (tras preprocesado; ver tamano en JSON)",
-                    use_container_width=True,
+                    width="stretch",
                 )
         with col_pp2:
             st.json(
@@ -79,7 +83,7 @@ def _mostrar_prediccion_kvasir(p: dict) -> None:
             "Colormap *jet*: rojo = mayor peso en la decision para esa clase. "
             "Imagen internamente a 224 px como en el entrenamiento."
         )
-        st.image(gc, caption="Superposicion Grad-CAM + imagen", use_container_width=True)
+        st.image(gc, caption="Superposicion Grad-CAM + imagen", width="stretch")
 
 
 def render() -> None:
@@ -104,6 +108,7 @@ def render() -> None:
     if not ficheros:
         st.session_state[state.IMAGENES] = []
         st.session_state[state.PRED_KVASIR] = None
+        st.session_state[state.PRED_KVASIR_FIRMA] = None
     else:
         imagenes_validas: list = []
         for fichero in ficheros:
@@ -114,23 +119,39 @@ def render() -> None:
             imagenes_validas.append(fichero)
         st.session_state[state.IMAGENES] = imagenes_validas
         if imagenes_validas:
+            firma_actual = _firma_imagenes(imagenes_validas)
             st.success(f"Imagenes validas cargadas: {len(imagenes_validas)}")
             columnas = st.columns(min(3, len(imagenes_validas)))
             for i, fichero in enumerate(imagenes_validas):
                 with columnas[i % len(columnas)]:
-                    st.image(fichero, caption=fichero.name, use_container_width=True)
+                    st.image(fichero, caption=fichero.name, width="stretch")
 
-            with st.spinner("Comprobando imagenes con el modelo de vision (Kvasir)..."):
-                predicciones = [predecir_fichero_uploader(raiz, f) for f in imagenes_validas]
-            st.session_state[state.PRED_KVASIR] = predicciones
+            if st.session_state.get(state.PRED_KVASIR_FIRMA) != firma_actual:
+                st.info("Imagenes nuevas detectadas. Pulsa **Comprobar con modelo Kvasir** para ejecutar inferencia.")
+                st.session_state[state.PRED_KVASIR] = None
 
-            st.divider()
-            st.markdown("**Comprobacion con el modelo (baseline Kvasir, ResNet-18)**")
-            for pred in predicciones:
-                with st.container(border=True):
-                    _mostrar_prediccion_kvasir(pred)
+            if st.button("Comprobar con modelo Kvasir", width="stretch"):
+                with st.spinner("Comprobando imagenes con el modelo de vision (Kvasir)..."):
+                    predicciones = []
+                    for f in imagenes_validas:
+                        try:
+                            predicciones.append(predecir_fichero_uploader(raiz, f))
+                        except Exception as exc:  # noqa: BLE001
+                            predicciones.append({"archivo": getattr(f, "name", "imagen"), "error": str(exc)})
+                st.session_state[state.PRED_KVASIR] = predicciones
+                st.session_state[state.PRED_KVASIR_FIRMA] = firma_actual
+
+            predicciones = st.session_state.get(state.PRED_KVASIR)
+
+            if predicciones:
+                st.divider()
+                st.markdown("**Comprobacion con el modelo (baseline Kvasir, ResNet-18)**")
+                for pred in predicciones:
+                    with st.container(border=True):
+                        _mostrar_prediccion_kvasir(pred)
         else:
             st.session_state[state.PRED_KVASIR] = None
+            st.session_state[state.PRED_KVASIR_FIRMA] = None
 
     col_izq, col_der = st.columns([1, 1])
     with col_izq:
