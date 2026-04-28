@@ -4,6 +4,10 @@ import streamlit as st
 
 from config import MAX_MB_POR_IMAGEN
 import state
+from visor_imagen import mostrar_imagen_centrada
+
+# Ancho fijo (px) para previsualizaciones; evita que una sola imagen ocupe toda la ventana.
+_ANCHO_VISTA_PREVIA_PX = 360
 
 
 def _firma_imagenes(ficheros: list) -> tuple[tuple[str, int], ...]:
@@ -44,7 +48,11 @@ def render() -> None:
             columnas = st.columns(min(3, len(imagenes_validas)))
             for i, fichero in enumerate(imagenes_validas):
                 with columnas[i % len(columnas)]:
-                    st.image(fichero, caption=fichero.name, width="stretch")
+                    mostrar_imagen_centrada(
+                        fichero,
+                        caption=fichero.name,
+                        ancho_px=_ANCHO_VISTA_PREVIA_PX,
+                    )
             firma_prev = st.session_state.get(state.PRED_KVASIR_FIRMA)
             if firma_prev != firma_actual:
                 st.session_state[state.PRED_KVASIR] = None
