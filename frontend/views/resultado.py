@@ -3,6 +3,7 @@
 import streamlit as st
 
 import state
+from visor_imagen import mostrar_imagen_centrada
 from servicio_modelo import (
     ejecutar_prediccion,
     etiqueta_desde_probabilidad,
@@ -92,10 +93,10 @@ def render() -> None:
                     f"({p.get('confianza', 0):.0%})"
                 )
                 if p.get("gradcam_superposicion") is not None:
-                    st.image(
+                    mostrar_imagen_centrada(
                         p["gradcam_superposicion"],
                         caption="Grad-CAM (clase predicha)",
-                        use_container_width=True,
+                        rellenar_ancho_bloque=True,
                     )
                 elif p.get("gradcam_error"):
                     st.caption(f"Grad-CAM: {p['gradcam_error'][:120]}")
