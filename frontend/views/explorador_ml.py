@@ -37,7 +37,7 @@ def render() -> None:
     st.divider()
     st.subheader("Comparacion de resultados (test)")
 
-    if st.button("Entrenar y evaluar de nuevo los cinco modelos", type="primary"):
+    if st.button("Entrenar y evaluar de nuevo los cuatro modelos", type="primary"):
         with st.spinner("Entrenando y evaluando (puede tardar unos minutos)..."):
             try:
                 ml.entrenar_todos_los_baselines(rutas)
@@ -60,15 +60,8 @@ def render() -> None:
         )
 
     st.subheader("Matrices de confusion (test)")
-    nombres_modelos = [
-        "regresion_logistica",
-        "random_forest",
-        "xgboost",
-        "svm",
-        "catboost",
-    ]
-    columnas = st.columns(5)
-    for i, nombre_modelo in enumerate(nombres_modelos):
+    columnas = st.columns(4)
+    for i, nombre_modelo in enumerate(["regresion_logistica", "random_forest", "xgboost", "svm"]):
         with columnas[i]:
             st.caption(f"**{nombre_modelo}**")
             artefactos = ml.cargar_artefactos_modelo(rutas[nombre_modelo])
